@@ -27,6 +27,7 @@ const generatedCode = document.getElementById('generatedCode');
 const terminalOutput = document.getElementById('terminalOutput');
 const terminalStatus = document.getElementById('terminalStatus');
 const stepIndicator = document.getElementById('stepIndicator');
+const inputContainer = document.querySelector('.input-container');
 
 // 상태 관리
 let currentChatId = null;
@@ -388,6 +389,7 @@ function enterTutorialMode(botResponse) {
     messagesContainer.style.display = 'none';
     tutorialMode.style.display = 'flex';
     backToChatBtn.style.display = 'flex';
+    inputContainer.style.display = 'none'; // 입력창 숨기기
 
     // 첫 단계 표시
     updateTutorialStep();
@@ -533,6 +535,7 @@ function backToChat() {
     tutorialMode.style.display = 'none';
     messagesContainer.style.display = 'flex';
     backToChatBtn.style.display = 'none';
+    inputContainer.style.display = 'block'; // 입력창 다시 표시
 
     // 상태 초기화
     if (isCodeRunning) {
@@ -543,8 +546,13 @@ function backToChat() {
     canvasViewer.style.display = 'flex';
     codeViewer.style.display = 'none';
     executeCodeBtn.disabled = true;
+    executeCodeBtn.style.display = 'flex';
+    stopCodeBtn.style.display = 'none';
     currentStep = 0;
     terminalStatus.textContent = '대기 중';
     terminalStatus.classList.remove('running');
     terminalOutput.innerHTML = '<div class="terminal-welcome">PIGENT 터미널<br>코드를 실행하면 출력 결과가 여기에 표시됩니다.</div>';
+
+    // 실행 상태 리셋
+    isCodeRunning = false;
 }
