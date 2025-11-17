@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIGENT - 라즈베리파이 프로젝트 생성기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .main-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .generate-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .generate-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .execute-btn {
+            background: #48bb78;
+            color: white;
+        }
+
+        .execute-btn:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .execute-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-section {
+            margin-top: 20px;
+        }
+
+        .code-block {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 10px;
+        }
+
+        .code-block h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .error {
+            background: #fed7d7;
+            border: 2px solid #fc8181;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .success {
+            background: #c6f6d5;
+            border: 2px solid #48bb78;
+            color: #22543d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .output-section {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .output-section h3 {
+            color: #48bb78;
+            margin-bottom: 15px;
+        }
+
+        .output-content {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 PIGENT</h1>
+
+        <div class="main-panel">
+            <div class="input-section">
+                <label for="userInput">무엇을 만들고 싶으신가요?</label>
+                <textarea
+                    id="userInput"
+                    placeholder="예: LED를 1초마다 깜빡이게 하고 싶어요"
+                ></textarea>
+            </div>
+
+            <div class="button-group">
+                <button class="generate-btn" onclick="generateCode()">코드 생성</button>
+                <button class="execute-btn" id="executeBtn" onclick="executeCode()" disabled>코드 실행</button>
+            </div>
+
+            <div id="result" class="result-section"></div>
+            <div id="output" class="output-section" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8000';
+        let generatedCode = '';
+
+        async function generateCode() {
+            const userInput = document.getElementById('userInput').value.trim();
+
+            if (!userInput) {
+                alert('내용을 입력해주세요!');
+                return;
+            }
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="loading">생성 중...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ user_input: userInput })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    displayResult(data.response);
+                    extractCode(data.response);
+                    document.getElementById('executeBtn').disabled = false;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">오류: ${data.detail || '알 수 없는 오류'}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">서버 연결 실패: ${error.message}</div>`;
+            }
+        }
+
+        function displayResult(text) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<div class="code-block"><pre><code>${escapeHtml(text)}</code></pre></div>`;
+        }
+
+        function extractCode(text) {
+            // ```python 과 ``` 사이의 코드 추출
+            const codeMatch = text.match(/```python\n([\s\S]*?)```/);
+            if (codeMatch) {
+                generatedCode = codeMatch[1].trim();
+            } else {
+                generatedCode = '';
+            }
+        }
+
+        async function executeCode() {
+            if (!generatedCode) {
+                alert('실행할 코드가 없습니다!');
+                return;
+            }
+
+            const outputDiv = document.getElementById('output');
+            outputDiv.style.display = 'block';
+            outputDiv.innerHTML = '<h3>실행 결과</h3><div class="output-content">실행 중...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/execute`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ code: generatedCode })
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    outputDiv.innerHTML = `
+                        <h3>실행 결과</h3>
+                        <div class="output-content">${escapeHtml(data.output || '실행 완료 (출력 없음)')}</div>
+                    `;
+                } else {
+                    outputDiv.innerHTML = `
+                        <h3>실행 오류</h3>
+                        <div class="error">${escapeHtml(data.error || '알 수 없는 오류')}</div>
+                    `;
+                }
+            } catch (error) {
+                outputDiv.innerHTML = `
+                    <h3>실행 오류</h3>
+                    <div class="error">서버 연결 실패: ${error.message}</div>
+                `;
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Enter 키로 생성
+        document.getElementById('userInput').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                generateCode();
+            }
+        });
+    </script>
+</body>
+</html>
