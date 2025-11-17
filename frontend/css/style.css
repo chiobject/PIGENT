@@ -158,6 +158,48 @@ body {
     overflow: hidden;
 }
 
+/* 채팅 헤더 */
+.chat-header {
+    padding: 16px 24px;
+    background: var(--sidebar-bg);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.chat-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.back-to-chat-btn {
+    padding: 8px 16px;
+    background: var(--bg-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.back-to-chat-btn:hover {
+    background: var(--border-color);
+}
+
 .chat-container {
     flex: 1;
     overflow-y: auto;
@@ -197,6 +239,49 @@ body {
 
 .welcome-content .description {
     font-size: 18px;
+    color: var(--text-secondary);
+}
+
+/* 로딩 화면 */
+.loading-screen {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.loading-content {
+    text-align: center;
+    max-width: 400px;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 24px;
+    border: 4px solid var(--border-color);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-content h2 {
+    font-size: 28px;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+}
+
+.loading-content p {
+    font-size: 16px;
     color: var(--text-secondary);
 }
 
@@ -287,6 +372,281 @@ body {
 
 .message-content code {
     font-family: 'Courier New', monospace;
+}
+
+.ready-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    width: fit-content;
+    transition: all 0.3s ease;
+}
+
+.ready-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* 튜토리얼 모드 */
+.tutorial-mode {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.tutorial-content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 20px;
+    padding: 20px;
+    overflow: hidden;
+}
+
+/* 캔버스 섹션 */
+.canvas-section {
+    display: flex;
+    flex-direction: column;
+    background: var(--sidebar-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.canvas-header {
+    padding: 16px 20px;
+    background: var(--bg-color);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.canvas-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.step-indicator {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.step-indicator .current-step {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 18px;
+}
+
+.canvas-viewer {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.circuit-image {
+    text-align: center;
+    max-width: 100%;
+}
+
+.circuit-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    background: var(--bg-color);
+    padding: 20px;
+}
+
+.circuit-description {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-top: 12px;
+}
+
+/* 코드 뷰어 */
+.code-viewer {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: var(--bg-color);
+}
+
+.code-header {
+    margin-bottom: 12px;
+}
+
+.code-header h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.code-viewer pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* 캔버스 컨트롤 */
+.canvas-controls {
+    padding: 16px 20px;
+    background: var(--bg-color);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.navigation-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.nav-btn {
+    padding: 10px 16px;
+    background: var(--sidebar-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.nav-btn:hover:not(:disabled) {
+    background: var(--border-color);
+}
+
+.nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.execution-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.execute-code-btn,
+.stop-code-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.execute-code-btn {
+    background: var(--primary-color);
+    color: white;
+}
+
+.execute-code-btn:hover:not(:disabled) {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.execute-code-btn:disabled {
+    background: var(--border-color);
+    color: var(--text-secondary);
+    cursor: not-allowed;
+}
+
+.stop-code-btn {
+    background: #ef4444;
+    color: white;
+}
+
+.stop-code-btn:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+/* 터미널 섹션 */
+.terminal-section {
+    display: flex;
+    flex-direction: column;
+    background: var(--sidebar-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.terminal-header {
+    padding: 16px 20px;
+    background: var(--bg-color);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.terminal-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.terminal-status {
+    font-size: 13px;
+    padding: 4px 12px;
+    background: var(--border-color);
+    color: var(--text-secondary);
+    border-radius: 12px;
+}
+
+.terminal-status.running {
+    background: #48bb78;
+    color: white;
+}
+
+.terminal-output {
+    flex: 1;
+    padding: 20px;
+    background: var(--code-bg);
+    color: var(--code-text);
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-y: auto;
+    white-space: pre-wrap;
+}
+
+.terminal-welcome {
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 40px 20px;
 }
 
 /* 입력 영역 */
