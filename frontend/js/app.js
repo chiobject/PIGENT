@@ -221,6 +221,27 @@ function formatMessageContent(content) {
 
 // 새 채팅 시작
 function startNewChat() {
+    // 튜토리얼 모드가 활성화되어 있다면 종료
+    if (tutorialMode.style.display !== 'none') {
+        // 실행 중인 코드 중지
+        if (isCodeRunning) {
+            isCodeRunning = false;
+        }
+
+        // 튜토리얼 모드 UI 초기화
+        tutorialMode.style.display = 'none';
+        backToChatBtn.style.display = 'none';
+        canvasViewer.style.display = 'flex';
+        codeViewer.style.display = 'none';
+        executeCodeBtn.disabled = true;
+        executeCodeBtn.style.display = 'flex';
+        stopCodeBtn.style.display = 'none';
+        currentStep = 0;
+        terminalStatus.textContent = '대기 중';
+        terminalStatus.classList.remove('running');
+        terminalOutput.innerHTML = '<div class="terminal-welcome">PIGENT 터미널<br>코드를 실행하면 출력 결과가 여기에 표시됩니다.</div>';
+    }
+
     currentChatId = Date.now();
     messagesContainer.innerHTML = '';
     messagesContainer.classList.remove('active');
@@ -228,6 +249,7 @@ function startNewChat() {
     loadingScreen.style.display = 'none';
     welcomeScreen.style.display = 'flex';
     chatHeader.style.display = 'none';
+    inputContainer.style.display = 'block'; // 입력창 표시
     chatInput.value = '';
     autoResizeTextarea();
 }
@@ -307,12 +329,34 @@ function loadChat(chatId) {
     const chat = chatHistory.find(c => c.id === chatId);
     if (!chat) return;
 
+    // 튜토리얼 모드가 활성화되어 있다면 종료
+    if (tutorialMode.style.display !== 'none') {
+        // 실행 중인 코드 중지
+        if (isCodeRunning) {
+            isCodeRunning = false;
+        }
+
+        // 튜토리얼 모드 UI 초기화
+        tutorialMode.style.display = 'none';
+        backToChatBtn.style.display = 'none';
+        canvasViewer.style.display = 'flex';
+        codeViewer.style.display = 'none';
+        executeCodeBtn.disabled = true;
+        executeCodeBtn.style.display = 'flex';
+        stopCodeBtn.style.display = 'none';
+        currentStep = 0;
+        terminalStatus.textContent = '대기 중';
+        terminalStatus.classList.remove('running');
+        terminalOutput.innerHTML = '<div class="terminal-welcome">PIGENT 터미널<br>코드를 실행하면 출력 결과가 여기에 표시됩니다.</div>';
+    }
+
     currentChatId = chatId;
     messagesContainer.innerHTML = '';
     welcomeScreen.style.display = 'none';
     loadingScreen.style.display = 'none';
     messagesContainer.style.display = 'flex';
     messagesContainer.classList.add('active');
+    inputContainer.style.display = 'block'; // 입력창 표시
 
     // 헤더 표시 및 타이틀 설정
     chatHeader.style.display = 'block';
