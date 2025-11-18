@@ -3,322 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PIGENT - 라즈베리파이 프로젝트 생성기</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            color: white;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5rem;
-        }
-
-        .main-panel {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
-        }
-
-        .input-section {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 100px;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            font-family: inherit;
-            resize: vertical;
-            transition: border-color 0.3s;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        button {
-            flex: 1;
-            padding: 15px 30px;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .generate-btn {
-            background: #667eea;
-            color: white;
-        }
-
-        .generate-btn:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .execute-btn {
-            background: #48bb78;
-            color: white;
-        }
-
-        .execute-btn:hover {
-            background: #38a169;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
-        }
-
-        .execute-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .result-section {
-            margin-top: 20px;
-        }
-
-        .code-block {
-            background: #f7fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 10px;
-        }
-
-        .code-block h3 {
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        pre {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            margin: 10px 0;
-        }
-
-        code {
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #667eea;
-            font-weight: bold;
-        }
-
-        .error {
-            background: #fed7d7;
-            border: 2px solid #fc8181;
-            color: #c53030;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        .success {
-            background: #c6f6d5;
-            border: 2px solid #48bb78;
-            color: #22543d;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        .output-section {
-            background: #f7fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .output-section h3 {
-            color: #48bb78;
-            margin-bottom: 15px;
-        }
-
-        .output-content {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 15px;
-            border-radius: 5px;
-            white-space: pre-wrap;
-            font-family: 'Courier New', monospace;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-    </style>
+    <title>PIGENT - 라즈베리파이 에이전트</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>🤖 PIGENT</h1>
-
-        <div class="main-panel">
-            <div class="input-section">
-                <label for="userInput">무엇을 만들고 싶으신가요?</label>
-                <textarea
-                    id="userInput"
-                    placeholder="예: LED를 1초마다 깜빡이게 하고 싶어요"
-                ></textarea>
+    <div class="app-container">
+        <!-- 왼쪽 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>PIGENT</h2>
+                <button class="new-chat-btn" id="newChatBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    새 채팅
+                </button>
             </div>
 
-            <div class="button-group">
-                <button class="generate-btn" onclick="generateCode()">코드 생성</button>
-                <button class="execute-btn" id="executeBtn" onclick="executeCode()" disabled>코드 실행</button>
+            <div class="chat-history">
+                <div class="chat-history-header">채팅 기록</div>
+                <div class="chat-list" id="chatList">
+                    <!-- 채팅 기록이 여기에 동적으로 추가됩니다 -->
+                </div>
             </div>
 
-            <div id="result" class="result-section"></div>
-            <div id="output" class="output-section" style="display: none;"></div>
-        </div>
+            <!-- 테마 토글 -->
+            <div class="theme-toggle-container">
+                <div class="theme-toggle-label">테마</div>
+                <label class="theme-switch">
+                    <input type="checkbox" id="themeToggle">
+                    <span class="theme-slider">
+                        <svg class="sun-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </span>
+                </label>
+            </div>
+        </aside>
+
+        <!-- 우측 메인 콘텐츠 영역 -->
+        <main class="main-content">
+            <!-- 상단 헤더 바 (채팅 시작 시 표시) -->
+            <div class="chat-header" id="chatHeader" style="display: none;">
+                <div class="header-content">
+                    <div class="chat-title" id="chatTitle">새 대화</div>
+                    <button class="back-to-chat-btn" id="backToChatBtn" style="display: none;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        채팅으로 돌아가기
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-container">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-content">
+                        <h1>PIGENT</h1>
+                        <p class="subtitle">라즈베리파이 에이전트</p>
+                        <p class="description">무엇을 도와드릴까요?</p>
+                    </div>
+                </div>
+
+                <!-- 로딩 화면 -->
+                <div class="loading-screen" id="loadingScreen" style="display: none;">
+                    <div class="loading-content">
+                        <div class="spinner"></div>
+                        <h2>생성 중...</h2>
+                        <p>AI가 응답을 생성하고 있습니다</p>
+                    </div>
+                </div>
+
+                <div class="messages-container" id="messagesContainer">
+                    <!-- 채팅 메시지가 여기에 추가됩니다 -->
+                </div>
+
+                <!-- 튜토리얼 모드 -->
+                <div class="tutorial-mode" id="tutorialMode" style="display: none;">
+                    <div class="tutorial-content">
+                        <!-- 좌측: 캔버스 영역 -->
+                        <div class="canvas-section">
+                            <div class="canvas-header">
+                                <h3>회로 연결 가이드</h3>
+                                <div class="step-indicator" id="stepIndicator">
+                                    <span class="current-step">1</span> / <span class="total-steps">3</span>
+                                </div>
+                            </div>
+
+                            <div class="canvas-viewer" id="canvasViewer">
+                                <div class="circuit-image">
+                                    <img id="circuitImage" src="" alt="회로 다이어그램">
+                                    <p class="circuit-description" id="circuitDescription">GPIO 17번 핀에 LED를 연결하세요</p>
+                                </div>
+                            </div>
+
+                            <!-- 코드 뷰어 (실행 모드에서 표시) -->
+                            <div class="code-viewer" id="codeViewer" style="display: none;">
+                                <div class="code-header">
+                                    <h4>생성된 코드</h4>
+                                </div>
+                                <pre><code id="generatedCode"></code></pre>
+                            </div>
+
+                            <div class="canvas-controls">
+                                <div class="navigation-buttons">
+                                    <button class="nav-btn prev-btn" id="prevStepBtn" disabled>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M15 18l-6-6 6-6"/>
+                                        </svg>
+                                        이전
+                                    </button>
+                                    <button class="nav-btn next-btn" id="nextStepBtn">
+                                        다음
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M9 18l6-6-6-6"/>
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div class="execution-buttons">
+                                    <button class="execute-code-btn" id="executeCodeBtn" disabled>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                        </svg>
+                                        코드 실행
+                                    </button>
+                                    <button class="stop-code-btn" id="stopCodeBtn" style="display: none;">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="6" y="6" width="12" height="12"></rect>
+                                        </svg>
+                                        실행 중지
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 우측: 터미널 영역 -->
+                        <div class="terminal-section">
+                            <div class="terminal-header">
+                                <h3>터미널</h3>
+                                <div class="terminal-status" id="terminalStatus">대기 중</div>
+                            </div>
+                            <div class="terminal-output" id="terminalOutput">
+                                <div class="terminal-welcome">
+                                    PIGENT 터미널<br>
+                                    코드를 실행하면 출력 결과가 여기에 표시됩니다.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 채팅 입력 영역 -->
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <textarea
+                        id="userInput"
+                        class="chat-input"
+                        placeholder="메시지를 입력하세요..."
+                        rows="1"
+                    ></textarea>
+                    <button class="send-btn" id="sendBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <script>
-        const API_BASE_URL = 'http://localhost:8000';
-        let generatedCode = '';
-
-        async function generateCode() {
-            const userInput = document.getElementById('userInput').value.trim();
-
-            if (!userInput) {
-                alert('내용을 입력해주세요!');
-                return;
-            }
-
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = '<div class="loading">생성 중...</div>';
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/generate`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ user_input: userInput })
-                });
-
-                const data = await response.json();
-
-                if (data.status === 'success') {
-                    displayResult(data.response);
-                    extractCode(data.response);
-                    document.getElementById('executeBtn').disabled = false;
-                } else {
-                    resultDiv.innerHTML = `<div class="error">오류: ${data.detail || '알 수 없는 오류'}</div>`;
-                }
-            } catch (error) {
-                resultDiv.innerHTML = `<div class="error">서버 연결 실패: ${error.message}</div>`;
-            }
-        }
-
-        function displayResult(text) {
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = `<div class="code-block"><pre><code>${escapeHtml(text)}</code></pre></div>`;
-        }
-
-        function extractCode(text) {
-            // ```python 과 ``` 사이의 코드 추출
-            const codeMatch = text.match(/```python\n([\s\S]*?)```/);
-            if (codeMatch) {
-                generatedCode = codeMatch[1].trim();
-            } else {
-                generatedCode = '';
-            }
-        }
-
-        async function executeCode() {
-            if (!generatedCode) {
-                alert('실행할 코드가 없습니다!');
-                return;
-            }
-
-            const outputDiv = document.getElementById('output');
-            outputDiv.style.display = 'block';
-            outputDiv.innerHTML = '<h3>실행 결과</h3><div class="output-content">실행 중...</div>';
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/execute`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ code: generatedCode })
-                });
-
-                const data = await response.json();
-
-                if (data.status === 'success') {
-                    outputDiv.innerHTML = `
-                        <h3>실행 결과</h3>
-                        <div class="output-content">${escapeHtml(data.output || '실행 완료 (출력 없음)')}</div>
-                    `;
-                } else {
-                    outputDiv.innerHTML = `
-                        <h3>실행 오류</h3>
-                        <div class="error">${escapeHtml(data.error || '알 수 없는 오류')}</div>
-                    `;
-                }
-            } catch (error) {
-                outputDiv.innerHTML = `
-                    <h3>실행 오류</h3>
-                    <div class="error">서버 연결 실패: ${error.message}</div>
-                `;
-            }
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Enter 키로 생성
-        document.getElementById('userInput').addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.key === 'Enter') {
-                generateCode();
-            }
-        });
-    </script>
+    <script src="js/mockData.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
