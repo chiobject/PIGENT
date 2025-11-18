@@ -143,12 +143,10 @@ def save_log(user_input: str, ai_response: str):
 # Board 관련
 class BoardCreate(BaseModel):
     title: str
-    vm_content: Optional[str] = None
 
 class BoardResponse(BaseModel):
     board_id: int
     title: str
-    vm_content: Optional[str]
     created_time: datetime
     edited_time: datetime
 
@@ -226,8 +224,7 @@ async def create_board(board: BoardCreate, db: Session = Depends(get_db)):
     """새로운 보드 생성"""
     new_board = crud.create_board(
         db=db,
-        title=board.title,
-        vm_content=board.vm_content
+        title=board.title
     )
     return new_board
 

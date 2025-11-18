@@ -15,7 +15,6 @@ class Board(Base):
 
     board_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     title = Column(String(255), nullable=False)
-    vm_content = Column(Text, nullable=True)  # 가상머신 내용/설정 (심볼릭 링크 정보)
     created_time = Column(DateTime, default=datetime.now, nullable=False)
     edited_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
 

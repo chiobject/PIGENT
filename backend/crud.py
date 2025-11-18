@@ -5,11 +5,10 @@ from typing import Optional, List
 
 # ==================== Board CRUD ====================
 
-def create_board(db: Session, title: str, vm_content: Optional[str] = None) -> Board:
+def create_board(db: Session, title: str) -> Board:
     """새로운 보드 생성"""
     board = Board(
-        title=title,
-        vm_content=vm_content
+        title=title
     )
     db.add(board)
     db.commit()
@@ -24,8 +23,7 @@ def get_all_boards(db: Session, skip: int = 0, limit: int = 100) -> List[Board]:
     """모든 보드 조회 (페이지네이션)"""
     return db.query(Board).offset(skip).limit(limit).all()
 
-def update_board(db: Session, board_id: int, title: Optional[str] = None,
-                 vm_content: Optional[str] = None) -> Optional[Board]:
+def update_board(db: Session, board_id: int, title: Optional[str] = None) -> Optional[Board]:
     """보드 정보 업데이트"""
     board = get_board(db, board_id)
     if not board:
@@ -33,8 +31,6 @@ def update_board(db: Session, board_id: int, title: Optional[str] = None,
 
     if title is not None:
         board.title = title
-    if vm_content is not None:
-        board.vm_content = vm_content
 
     board.edited_time = datetime.now()
     db.commit()
