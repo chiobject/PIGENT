@@ -6,13 +6,27 @@ from typing import Optional, List
 # ==================== Board CRUD ====================
 
 def create_board(db: Session, title: str) -> Board:
-    """새로운 보드 생성"""
+    """새로운 보드 생성 및 SlaveVM 자동 생성"""
+    import vm_manager
+    
+    # 1. Board 생성
     board = Board(
         title=title
     )
     db.add(board)
     db.commit()
     db.refresh(board)
+    
+    try:
+        # 2. Slave VM 물리적 생성 (DB 저장 없음, 파일 시스템만)
+        vm_manager.create_slave_vm(board.board_id)
+        print(f"[CRUD] Board {board.board_id} created with SlaveVM")
+        
+    except Exception as e:
+        print(f"[CRUD] Error creating SlaveVM: {e}")
+        # Board는 생성되었지만 VM 생성 실패 - 일단 Board는 유지
+        # 추후 retry 로직 추가 가능
+    
     return board
 
 def get_board(db: Session, board_id: int) -> Optional[Board]:
@@ -38,11 +52,20 @@ def update_board(db: Session, board_id: int, title: Optional[str] = None) -> Opt
     return board
 
 def delete_board(db: Session, board_id: int) -> bool:
-    """보드 삭제"""
+    """보드 및 SlaveVM 삭제"""
+    import vm_manager
+    
     board = get_board(db, board_id)
     if not board:
         return False
-
+    
+    # 1. Slave VM 물리적 삭제 (파일 시스템)
+    try:
+        vm_manager.delete_slave_vm(board_id)
+    except Exception as e:
+        print(f"[CRUD] Error deleting SlaveVM: {e}")
+    
+    # 2. Board 삭제 (Cascade로 관련 데이터 자동 삭제)
     db.delete(board)
     db.commit()
     return True
