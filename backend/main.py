@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from ollama import AsyncClient
@@ -19,6 +21,10 @@ import crud
 load_dotenv()
 
 app = FastAPI()
+
+# 프론트엔드 정적 파일 서빙 설정
+FRONTEND_DIR = Path(__file__).parent.parent / "frontend"
+app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
 
 # 데이터베이스 테이블 생성
 Base.metadata.create_all(bind=engine)
@@ -177,6 +183,10 @@ class ProjectResponse(BaseModel):
 
 @app.get("/")
 async def root():
+    """프론트엔드 index.html 반환"""
+    index_path = FRONTEND_DIR / "index.html"
+    if index_path.exists():
+        return FileResponse(index_path)
     return {"message": "PIGENT API Server", "status": "running"}
 
 @app.post("/generate", response_model=ProjectResponse)

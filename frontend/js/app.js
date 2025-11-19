@@ -30,9 +30,9 @@ const stepIndicator = document.getElementById('stepIndicator');
 const inputContainer = document.querySelector('.input-container');
 
 // 상태 관리
-let currentChatId = null;
-let chatHistory = [];
-let useMockData = true; // 목업 데이터 사용 여부
+let currentBoardId = null;
+let boards = [];
+let useMockData = false; // 목업 데이터 사용 여부
 
 // 튜토리얼 상태
 let currentStep = 0;
@@ -42,7 +42,7 @@ let isCodeRunning = false;
 
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
-    loadChatHistory();
+    loadBoards();
     setupEventListeners();
     autoResizeTextarea();
     loadThemePreference();
@@ -85,11 +85,24 @@ async function sendMessage() {
 
     if (!message) return;
 
-    // 첫 메시지인 경우 헤더 표시 및 타이틀 설정
-    const isFirstMessage = welcomeScreen.style.display !== 'none';
-    if (isFirstMessage) {
+    // Board가 없으면 생성 (첫 메시지)
+    if (!currentBoardId) {
+        // 사용자 질문을 10글자만 잘라서 타이틀로 사용
+        const title = message.substring(0, 10);
+        console.log('새 보드 생성:', title);
+        
+        const newBoard = await createNewBoard(title);
+        if (!newBoard) {
+            alert('보드 생성에 실패했습니다.');
+            return;
+        }
+        
+        currentBoardId = newBoard.board_id;
+        console.log('보드 생성 완료:', currentBoardId);
+        
+        // 헤더 표시 및 타이틀 설정
         chatHeader.style.display = 'block';
-        chatTitle.textContent = message.substring(0, 50) + (message.length > 50 ? '...' : '');
+        chatTitle.textContent = title;
     }
 
     // 환영 화면 숨기기
@@ -107,22 +120,23 @@ async function sendMessage() {
     sendBtn.disabled = true;
 
     try {
-        let data;
-
-        if (useMockData) {
-            // 목업 데이터 사용
-            data = await generateMockResponse(message);
-        } else {
-            // 실제 API 호출
-            const response = await fetch(`${API_BASE_URL}/generate`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ user_input: message })
-            });
-            data = await response.json();
+        // 실제 API 호출
+        const response = await fetch(`${API_BASE_URL}/chat`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                board_id: currentBoardId,
+                user_input: message 
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to send message');
         }
+        
+        const data = await response.json();
 
         // 로딩 화면 숨기기 및 메시지 컨테이너 표시
         loadingScreen.style.display = 'none';
@@ -132,14 +146,15 @@ async function sendMessage() {
         // 사용자 메시지 추가
         addMessage('user', message);
 
-        if (data.status === 'success') {
-            // 봇 응답 추가
-            addMessage('bot', data.response);
-
-            // 채팅 기록에 저장
-            saveToChatHistory(message, data.response);
+        // AI 응답 추가
+        if (data.response_type === 'success') {
+            let botResponse = '';
+            if (data.code_content) {
+                botResponse += `\n\n\`\`\`python\n${data.code_content}\n\`\`\``;
+            }
+            addMessage('bot', botResponse || data.plain_text || '응답 내용 없음');
         } else {
-            addMessage('bot', `오류가 발생했습니다: ${data.detail || '알 수 없는 오류'}`);
+            addMessage('bot', data.plain_text || '응답 내용 없음');
         }
     } catch (error) {
         // 로딩 화면 숨기기
@@ -220,7 +235,7 @@ function formatMessageContent(content) {
 }
 
 // 새 채팅 시작
-function startNewChat() {
+async function startNewChat() {
     // 튜토리얼 모드가 활성화되어 있다면 종료
     if (tutorialMode.style.display !== 'none') {
         // 실행 중인 코드 중지
@@ -242,7 +257,12 @@ function startNewChat() {
         terminalOutput.innerHTML = '<div class="terminal-welcome">PIGENT 터미널<br>코드를 실행하면 출력 결과가 여기에 표시됩니다.</div>';
     }
 
-    currentChatId = Date.now();
+    // 새 보드 생성
+    const newBoard = await createNewBoard('새 프로젝트');
+    if (newBoard) {
+        currentBoardId = newBoard.board_id;
+    }
+
     messagesContainer.innerHTML = '';
     messagesContainer.classList.remove('active');
     messagesContainer.style.display = 'none';
@@ -254,120 +274,208 @@ function startNewChat() {
     autoResizeTextarea();
 }
 
-// 채팅 기록 저장
-function saveToChatHistory(userMessage, botResponse) {
-    if (!currentChatId) {
-        currentChatId = Date.now();
-    }
-
-    const chatItem = {
-        id: currentChatId,
-        title: userMessage.substring(0, 30) + (userMessage.length > 30 ? '...' : ''),
-        timestamp: new Date().toISOString(),
-        messages: []
-    };
-
-    // 기존 채팅 찾기
-    const existingChatIndex = chatHistory.findIndex(chat => chat.id === currentChatId);
-
-    if (existingChatIndex >= 0) {
-        chatHistory[existingChatIndex].messages.push(
-            { type: 'user', content: userMessage },
-            { type: 'bot', content: botResponse }
-        );
-    } else {
-        chatItem.messages.push(
-            { type: 'user', content: userMessage },
-            { type: 'bot', content: botResponse }
-        );
-        chatHistory.unshift(chatItem);
-    }
-
-    // 로컬 스토리지에 저장
-    localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
-
-    // UI 업데이트
-    updateChatHistoryUI();
-}
-
-// 채팅 기록 로드
-function loadChatHistory() {
-    if (useMockData && typeof mockChatHistory !== 'undefined') {
-        // 목업 데이터 사용
-        chatHistory = mockChatHistory;
-        updateChatHistoryUI();
-    } else {
-        // 로컬 스토리지에서 로드
-        const saved = localStorage.getItem('chatHistory');
-        if (saved) {
-            chatHistory = JSON.parse(saved);
-            updateChatHistoryUI();
+// 보드 목록 로드
+async function loadBoards() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/boards`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch boards: ${response.status} ${response.statusText}`);
         }
+        
+        boards = await response.json();
+        console.log('보드 로드 완료:', boards);
+        updateBoardListUI();
+        
+        // 보드가 없으면 자동으로 첫 보드 생성
+        if (boards.length === 0) {
+            console.log('보드가 없어서 새로 생성합니다');
+            await createNewBoard('새 프로젝트');
+        }
+    } catch (error) {
+        console.error('보드 로드 실패:', error);
+        alert(`서버 연결 실패: ${error.message}\n서버가 실행 중인지 확인하세요.`);
     }
 }
 
-// 채팅 기록 UI 업데이트
-function updateChatHistoryUI() {
+// 새 보드 생성
+async function createNewBoard(title) {
+    try {
+        console.log('보드 생성 요청:', title);
+        const response = await fetch(`${API_BASE_URL}/boards`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ title })
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to create board: ${response.status} - ${errorText}`);
+        }
+        
+        const newBoard = await response.json();
+        console.log('보드 생성 완료:', newBoard);
+        
+        // 보드 목록 맨 위에 추가
+        boards.unshift(newBoard);
+        
+        // UI 즉시 업데이트
+        updateBoardListUI();
+        
+        return newBoard;
+    } catch (error) {
+        console.error('보드 생성 실패:', error);
+        return null;
+    }
+}
+
+// 보드 목록 UI 업데이트
+function updateBoardListUI() {
+    console.log('보드 목록 UI 업데이트:', boards);
     chatList.innerHTML = '';
 
-    chatHistory.forEach(chat => {
-        const chatItem = document.createElement('div');
-        chatItem.className = 'chat-item';
-        chatItem.textContent = chat.title;
+    if (boards.length === 0) {
+        chatList.innerHTML = '<div class="no-boards">채팅이 없습니다</div>';
+        return;
+    }
 
-        if (chat.id === currentChatId) {
-            chatItem.classList.add('active');
+    boards.forEach(board => {
+        const boardItem = document.createElement('div');
+        boardItem.className = 'chat-item';
+
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'chat-item-title';
+        titleSpan.textContent = board.title;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-board-btn';
+        deleteBtn.innerHTML = '×';
+        deleteBtn.onclick = (e) => {
+            e.stopPropagation();
+            deleteBoard(board.board_id);
+        };
+
+        boardItem.appendChild(titleSpan);
+        boardItem.appendChild(deleteBtn);
+
+        if (board.board_id === currentBoardId) {
+            boardItem.classList.add('active');
         }
 
-        chatItem.addEventListener('click', () => loadChat(chat.id));
-        chatList.appendChild(chatItem);
+        boardItem.addEventListener('click', () => loadBoard(board.board_id));
+        chatList.appendChild(boardItem);
     });
 }
 
-// 특정 채팅 로드
-function loadChat(chatId) {
-    const chat = chatHistory.find(c => c.id === chatId);
-    if (!chat) return;
-
-    // 튜토리얼 모드가 활성화되어 있다면 종료
-    if (tutorialMode.style.display !== 'none') {
-        // 실행 중인 코드 중지
-        if (isCodeRunning) {
-            isCodeRunning = false;
-        }
-
-        // 튜토리얼 모드 UI 초기화
-        tutorialMode.style.display = 'none';
-        backToChatBtn.style.display = 'none';
-        canvasViewer.style.display = 'flex';
-        codeViewer.style.display = 'none';
-        executeCodeBtn.disabled = true;
-        executeCodeBtn.style.display = 'flex';
-        stopCodeBtn.style.display = 'none';
-        currentStep = 0;
-        terminalStatus.textContent = '대기 중';
-        terminalStatus.classList.remove('running');
-        terminalOutput.innerHTML = '<div class="terminal-welcome">PIGENT 터미널<br>코드를 실행하면 출력 결과가 여기에 표시됩니다.</div>';
+// 보드 삭제
+async function deleteBoard(boardId) {
+    if (!confirm('이 보드를 삭제하시겠습니까?')) {
+        return;
     }
 
-    currentChatId = chatId;
-    messagesContainer.innerHTML = '';
-    welcomeScreen.style.display = 'none';
-    loadingScreen.style.display = 'none';
-    messagesContainer.style.display = 'flex';
-    messagesContainer.classList.add('active');
-    inputContainer.style.display = 'block'; // 입력창 표시
+    try {
+        const response = await fetch(`${API_BASE_URL}/boards/${boardId}`, {
+            method: 'DELETE'
+        });
 
-    // 헤더 표시 및 타이틀 설정
-    chatHeader.style.display = 'block';
-    chatTitle.textContent = chat.title;
+        if (!response.ok) {
+            throw new Error('Failed to delete board');
+        }
 
-    // 메시지 복원
-    chat.messages.forEach(msg => {
-        addMessage(msg.type, msg.content);
-    });
+        console.log('보드 삭제 성공:', boardId);
 
-    updateChatHistoryUI();
+        // 로컬 boards 배열에서 삭제
+        boards = boards.filter(b => b.board_id !== boardId);
+
+        // 삭제된 보드가 현재 보드인 경우
+        if (currentBoardId === boardId) {
+            currentBoardId = null;
+            chatMessages.innerHTML = '';
+            // 튜토리얼 모드가 활성화되어 있다면 종료
+            if (tutorialMode.style.display !== 'none') {
+                tutorialMode.style.display = 'none';
+                backToChatBtn.style.display = 'none';
+            }
+        }
+
+        // UI 업데이트
+        updateBoardListUI();
+
+    } catch (error) {
+        console.error('보드 삭제 실패:', error);
+        alert('보드 삭제에 실패했습니다.');
+    }
+}
+
+// 특정 보드의 채팅 로드
+async function loadBoard(boardId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/boards/${boardId}/chats`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch board chats');
+        }
+        
+        const chats = await response.json();
+        const board = boards.find(b => b.board_id === boardId);
+        
+        if (!board) return;
+
+        // 튜토리얼 모드가 활성화되어 있다면 종료
+        if (tutorialMode.style.display !== 'none') {
+            // 실행 중인 코드 중지
+            if (isCodeRunning) {
+                isCodeRunning = false;
+            }
+
+            // 튜토리얼 모드 UI 초기화
+            tutorialMode.style.display = 'none';
+            backToChatBtn.style.display = 'none';
+            canvasViewer.style.display = 'flex';
+            codeViewer.style.display = 'none';
+            executeCodeBtn.disabled = true;
+            executeCodeBtn.style.display = 'flex';
+            stopCodeBtn.style.display = 'none';
+            currentStep = 0;
+            terminalStatus.textContent = '대기 중';
+            terminalStatus.classList.remove('running');
+            terminalOutput.innerHTML = '<div class="terminal-welcome">PIGENT 터미널<br>코드를 실행하면 출력 결과가 여기에 표시됩니다.</div>';
+        }
+
+        currentBoardId = boardId;
+        messagesContainer.innerHTML = '';
+        welcomeScreen.style.display = 'none';
+        loadingScreen.style.display = 'none';
+        messagesContainer.style.display = 'flex';
+        messagesContainer.classList.add('active');
+        inputContainer.style.display = 'block'; // 입력창 표시
+
+        // 헤더 표시 및 타이틀 설정
+        chatHeader.style.display = 'block';
+        chatTitle.textContent = board.title;
+
+        // 채팅 메시지 복원
+        chats.forEach(chat => {
+            // 사용자 메시지
+            addMessage('user', chat.user_content);
+            
+            // AI 응답
+            if (chat.response_type === 'success') {
+                // CODE, WIRING, STEPS를 포함한 응답 재구성
+                let botResponse = '';
+                if (chat.code_content) {
+                    botResponse += `\n\n\`\`\`python\n${chat.code_content}\n\`\`\``;
+                }
+                addMessage('bot', botResponse || chat.plain_text || '응답 내용 없음');
+            } else {
+                addMessage('bot', chat.plain_text || '응답 내용 없음');
+            }
+        });
+
+        updateBoardListUI();
+    } catch (error) {
+        console.error('보드 채팅 로드 실패:', error);
+    }
 }
 
 // HTML 이스케이프 (XSS 방지)
