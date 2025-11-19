@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-import google.generativeai as genai
+from ollama import AsyncClient
 import os
 from dotenv import load_dotenv
 from datetime import datetime
@@ -32,15 +32,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# LLM API 설정
-LLM_API_KEY = os.getenv("LLM_API_KEY")
-LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME")  # 기본값: gemini-2.5-flash
+# Ollama 클라이언트 설정
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3")
 
-if not LLM_API_KEY:
-    raise ValueError("LLM_API_KEY가 설정되지 않았습니다.")
-
-genai.configure(api_key=LLM_API_KEY)
-model = genai.GenerativeModel(LLM_MODEL_NAME)
+ollama_client = AsyncClient(host=OLLAMA_HOST)
 
 # text_prompt.txt 파일 읽기
 def load_prompt_template():
@@ -192,14 +188,23 @@ async def generate_tutorial(request: ProjectRequest):
         # 프롬프트 구성
         full_prompt = f"{PROMPT_TEMPLATE}\n\n사용자 요청: {request.user_input}"
 
-        # Gemini API 호출
-        response = model.generate_content(full_prompt)
+        # Ollama API 호출
+        response = await ollama_client.chat(
+            model=OLLAMA_MODEL,
+            messages=[
+                {
+                    'role': 'user',
+                    'content': full_prompt,
+                },
+            ]
+        )
+        bot_reply = response['message']['content']
 
         # 로그 저장
-        save_log(request.user_input, response.text)
+        save_log(request.user_input, bot_reply)
 
         return ProjectResponse(
-            response=response.text,
+            response=bot_reply,
             status="success"
         )
 
@@ -212,9 +217,15 @@ async def health_check():
     """
     서버 상태 확인 엔드포인트
     """
+    try:
+        await ollama_client.list()
+        ollama_status = True
+    except:
+        ollama_status = False
+    
     return {
         "status": "healthy",
-        "llm_api_configured": bool(LLM_API_KEY)
+        "ollama_connected": ollama_status
     }
 
 # ==================== Board API ====================
@@ -299,9 +310,17 @@ async def create_chat(request: ChatRequest, db: Session = Depends(get_db)):
         # 프롬프트 구성
         full_prompt = f"{PROMPT_TEMPLATE}\n\n사용자 요청: {request.user_input}"
 
-        # LLM API 호출
-        llm_response = model.generate_content(full_prompt)
-        response_text = llm_response.text
+        # Ollama API 호출
+        llm_response = await ollama_client.chat(
+            model=OLLAMA_MODEL,
+            messages=[
+                {
+                    'role': 'user',
+                    'content': full_prompt,
+                },
+            ]
+        )
+        response_text = llm_response['message']['content']
 
         # 로그 저장
         save_log(request.user_input, response_text)
@@ -332,6 +351,9 @@ async def create_chat(request: ChatRequest, db: Session = Depends(get_db)):
         if board:
             board.edited_time = datetime.now()
             db.commit()
+
+        #print(full_prompt) #전체프롬프트 출력
+        print(response_text) #전체 응답결과 출력
 
         # 응답 반환
         return ChatResponse(
