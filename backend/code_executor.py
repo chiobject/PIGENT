@@ -46,9 +46,9 @@ def extract_imports(code: str) -> List[str]:
     return list(packages)
 
 
-def execute_code(db: Session, board_id: int, code: str) -> Tuple[bool, str, str]:
+def execute_code(db: Session, code: str) -> Tuple[bool, str, str]:
     """
-    Slave VM에서 코드 실행
+    Slave VM에서 코드 실행 (단일 공유 VM 사용)
     
     1. Python 버전 체크 (불일치 시 Slave VM 재생성)
     2. 임시 파일 생성
@@ -57,19 +57,18 @@ def execute_code(db: Session, board_id: int, code: str) -> Tuple[bool, str, str]
     
     Args:
         db: DB 세션
-        board_id: Board ID
         code: 실행할 Python 코드
     
     Returns:
         Tuple[bool, str, str]: (성공 여부, stdout, stderr)
     """
     # 1. Python 버전 체크 및 필요 시 재생성
-    vm_manager.recreate_slave_vm_if_needed(board_id)
+    vm_manager.recreate_slave_vm_if_needed()
     
     # 2. Python 실행 파일 경로 가져오기
-    python_exe = vm_manager.get_slave_python_executable(board_id)
+    python_exe = vm_manager.get_slave_python_executable()
     if not python_exe:
-        return False, "", f"SlaveVM not found for board {board_id}"
+        return False, "", "SlaveVM not found"
     
     # 3. 임시 파일 생성 및 코드 실행
     try:
@@ -79,9 +78,12 @@ def execute_code(db: Session, board_id: int, code: str) -> Tuple[bool, str, str]
         
         # 4. 환경변수 설정
         env = os.environ.copy()
-        # gpiozero가 자동으로 환경을 감지하도록 GPIOZERO_PIN_FACTORY 설정 제거
-        # - 라즈베리파이: 자동으로 실제 GPIO 사용
-        # - Windows/Mac: 자동으로 fake-rpi(mock) 사용
+        
+        # Windows/Mac 개발 환경에서는 mock 사용
+        # 라즈베리파이에서는 이 환경변수를 제거하면 실제 GPIO 사용
+        import sys
+        if sys.platform == "win32" or sys.platform == "darwin":
+            env['GPIOZERO_PIN_FACTORY'] = 'mock'
         
         # 5. subprocess로 코드 실행
         result = subprocess.run(

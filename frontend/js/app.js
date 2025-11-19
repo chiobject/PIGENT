@@ -615,7 +615,7 @@ async function executeCode() {
             await simulateCodeExecution();
         } else {
             // 실제 API 호출
-            const response = await fetch(`${API_BASE_URL}/execute`, {
+            const response = await fetch(`${API_BASE_URL}/boards/execute`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -625,10 +625,13 @@ async function executeCode() {
 
             const data = await response.json();
 
-            if (data.status === 'success') {
-                appendToTerminal(data.output || '실행 완료 (출력 없음)');
+            if (data.success) {
+                appendToTerminal(data.stdout || '실행 완료 (출력 없음)');
+                if (data.stderr) {
+                    appendToTerminal(`\n[경고/오류]\n${data.stderr}`);
+                }
             } else {
-                appendToTerminal(`오류: ${data.error || '알 수 없는 오류'}`);
+                appendToTerminal(`오류: ${data.stderr || '알 수 없는 오류'}`);
             }
         }
     } catch (error) {
