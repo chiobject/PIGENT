@@ -143,12 +143,10 @@ def save_log(user_input: str, ai_response: str):
 # Board 관련
 class BoardCreate(BaseModel):
     title: str
-    vm_content: Optional[str] = None
 
 class BoardResponse(BaseModel):
     board_id: int
     title: str
-    vm_content: Optional[str]
     created_time: datetime
     edited_time: datetime
 
@@ -226,8 +224,7 @@ async def create_board(board: BoardCreate, db: Session = Depends(get_db)):
     """새로운 보드 생성"""
     new_board = crud.create_board(
         db=db,
-        title=board.title,
-        vm_content=board.vm_content
+        title=board.title
     )
     return new_board
 
@@ -252,6 +249,39 @@ async def delete_board(board_id: int, db: Session = Depends(get_db)):
     if not success:
         raise HTTPException(status_code=404, detail="Board not found")
     return {"message": "Board deleted successfully"}
+
+# ==================== Code Execution API ====================
+
+class CodeExecuteRequest(BaseModel):
+    code: str
+
+class CodeExecuteResponse(BaseModel):
+    success: bool
+    stdout: str
+    stderr: str
+    board_id: int
+
+@app.post("/boards/{board_id}/execute", response_model=CodeExecuteResponse)
+async def execute_code(board_id: int, request: CodeExecuteRequest, db: Session = Depends(get_db)):
+    """
+    특정 Board의 SlaveVM에서 코드 실행
+    """
+    import code_executor
+    
+    # Board 존재 확인
+    board = crud.get_board(db, board_id)
+    if not board:
+        raise HTTPException(status_code=404, detail="Board not found")
+    
+    # 코드 실행
+    success, stdout, stderr = code_executor.execute_code(db, board_id, request.code)
+    
+    return CodeExecuteResponse(
+        success=success,
+        stdout=stdout,
+        stderr=stderr,
+        board_id=board_id
+    )
 
 # ==================== Chat API ====================
 
