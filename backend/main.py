@@ -4,13 +4,16 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from ollama import AsyncClient
+# from ollama import AsyncClient  # Ollama 사용 시 활성화
+import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 from datetime import datetime
 from pathlib import Path
 import re
 from typing import Optional
+import webbrowser
+import threading
 
 # 데이터베이스 import
 from database import engine, get_db, Base
@@ -21,10 +24,6 @@ import crud
 load_dotenv()
 
 app = FastAPI()
-
-# 프론트엔드 정적 파일 서빙 설정
-FRONTEND_DIR = Path(__file__).parent.parent / "frontend"
-app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
 
 # 데이터베이스 테이블 생성
 Base.metadata.create_all(bind=engine)
@@ -38,11 +37,43 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Ollama 클라이언트 설정
-OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3")
+# 프론트엔드 디렉토리 설정
+FRONTEND_DIR = Path(__file__).parent.parent / "frontend"
 
-ollama_client = AsyncClient(host=OLLAMA_HOST)
+# 루트 경로에서 index.html 제공
+@app.get("/")
+async def serve_frontend():
+    return FileResponse(FRONTEND_DIR / "index.html")
+
+# 정적 파일 마운트 (CSS, JS 등)
+app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
+
+# 서버 시작시 브라우저 자동 오픈
+@app.on_event("startup")
+async def startup_event():
+    def open_browser():
+        import time
+        time.sleep(1)  # 서버 완전히 시작될 때까지 대기
+        webbrowser.open("http://127.0.0.1:8000")
+    
+    threading.Thread(target=open_browser, daemon=True).start()
+
+# === LLM 클라이언트 설정 ===
+
+# Gemini 설정 (개발용)
+LLM_API_KEY = os.getenv("LLM_API_KEY")
+LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "gemini-2.5-flash")
+
+if not LLM_API_KEY:
+    raise ValueError("LLM_API_KEY가 설정되지 않았습니다.")
+
+genai.configure(api_key=LLM_API_KEY)
+model = genai.GenerativeModel(LLM_MODEL_NAME)
+
+# Ollama 설정 (배포용) - 주석 처리
+# OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+# OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3")
+# ollama_client = AsyncClient(host=OLLAMA_HOST)
 
 # text_prompt.txt 파일 읽기
 def load_prompt_template():
@@ -179,16 +210,6 @@ class ProjectResponse(BaseModel):
     response: str
     status: str
 
-
-
-@app.get("/")
-async def root():
-    """프론트엔드 index.html 반환"""
-    index_path = FRONTEND_DIR / "index.html"
-    if index_path.exists():
-        return FileResponse(index_path)
-    return {"message": "PIGENT API Server", "status": "running"}
-
 @app.post("/generate", response_model=ProjectResponse)
 async def generate_tutorial(request: ProjectRequest):
     """
@@ -198,23 +219,14 @@ async def generate_tutorial(request: ProjectRequest):
         # 프롬프트 구성
         full_prompt = f"{PROMPT_TEMPLATE}\n\n사용자 요청: {request.user_input}"
 
-        # Ollama API 호출
-        response = await ollama_client.chat(
-            model=OLLAMA_MODEL,
-            messages=[
-                {
-                    'role': 'user',
-                    'content': full_prompt,
-                },
-            ]
-        )
-        bot_reply = response['message']['content']
+        # Gemini API 호출
+        response = model.generate_content(full_prompt)
 
         # 로그 저장
-        save_log(request.user_input, bot_reply)
+        save_log(request.user_input, response.text)
 
         return ProjectResponse(
-            response=bot_reply,
+            response=response.text,
             status="success"
         )
 
@@ -227,15 +239,10 @@ async def health_check():
     """
     서버 상태 확인 엔드포인트
     """
-    try:
-        await ollama_client.list()
-        ollama_status = True
-    except:
-        ollama_status = False
-    
     return {
         "status": "healthy",
-        "ollama_connected": ollama_status
+        "llm_provider": "gemini",
+        "llm_api_configured": bool(LLM_API_KEY)
     }
 
 # ==================== Board API ====================
@@ -280,28 +287,21 @@ class CodeExecuteResponse(BaseModel):
     success: bool
     stdout: str
     stderr: str
-    board_id: int
 
-@app.post("/boards/{board_id}/execute", response_model=CodeExecuteResponse)
-async def execute_code(board_id: int, request: CodeExecuteRequest, db: Session = Depends(get_db)):
+@app.post("/boards/execute", response_model=CodeExecuteResponse)
+async def execute_code(request: CodeExecuteRequest, db: Session = Depends(get_db)):
     """
-    특정 Board의 SlaveVM에서 코드 실행
+    공유 Slave VM에서 코드 실행
     """
     import code_executor
     
-    # Board 존재 확인
-    board = crud.get_board(db, board_id)
-    if not board:
-        raise HTTPException(status_code=404, detail="Board not found")
-    
-    # 코드 실행
-    success, stdout, stderr = code_executor.execute_code(db, board_id, request.code)
+    # 코드 실행 (단일 공유 VM 사용)
+    success, stdout, stderr = code_executor.execute_code(db, request.code)
     
     return CodeExecuteResponse(
         success=success,
         stdout=stdout,
-        stderr=stderr,
-        board_id=board_id
+        stderr=stderr
     )
 
 # ==================== Chat API ====================
@@ -320,17 +320,9 @@ async def create_chat(request: ChatRequest, db: Session = Depends(get_db)):
         # 프롬프트 구성
         full_prompt = f"{PROMPT_TEMPLATE}\n\n사용자 요청: {request.user_input}"
 
-        # Ollama API 호출
-        llm_response = await ollama_client.chat(
-            model=OLLAMA_MODEL,
-            messages=[
-                {
-                    'role': 'user',
-                    'content': full_prompt,
-                },
-            ]
-        )
-        response_text = llm_response['message']['content']
+        # Gemini API 호출
+        llm_response = model.generate_content(full_prompt)
+        response_text = llm_response.text
 
         # 로그 저장
         save_log(request.user_input, response_text)
@@ -361,9 +353,6 @@ async def create_chat(request: ChatRequest, db: Session = Depends(get_db)):
         if board:
             board.edited_time = datetime.now()
             db.commit()
-
-        #print(full_prompt) #전체프롬프트 출력
-        print(response_text) #전체 응답결과 출력
 
         # 응답 반환
         return ChatResponse(
