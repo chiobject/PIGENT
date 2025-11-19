@@ -60,20 +60,68 @@ async def startup_event():
 
 # === LLM 클라이언트 설정 ===
 
-# Gemini 설정 (개발용)
+# Gemini 우선, 실패 시 Ollama 사용
 LLM_API_KEY = os.getenv("LLM_API_KEY")
 LLM_MODEL_NAME = os.getenv("LLM_MODEL_NAME", "gemini-2.5-flash")
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3")
 
-if not LLM_API_KEY:
-    raise ValueError("LLM_API_KEY가 설정되지 않았습니다.")
+use_gemini = False
+use_ollama = False
+gemini_model = None
+ollama_client = None
 
-genai.configure(api_key=LLM_API_KEY)
-model = genai.GenerativeModel(LLM_MODEL_NAME)
+# Gemini 초기화 시도
+if LLM_API_KEY:
+    try:
+        genai.configure(api_key=LLM_API_KEY)
+        gemini_model = genai.GenerativeModel(LLM_MODEL_NAME)
+        use_gemini = True
+        print("[LLM] Gemini API 활성화")
+    except Exception as e:
+        print(f"[LLM] Gemini 초기화 실패: {e}")
 
-# Ollama 설정 (배포용) - 주석 처리
-# OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-# OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3")
-# ollama_client = AsyncClient(host=OLLAMA_HOST)
+# Ollama 초기화 (Gemini 실패 시 또는 백업용)
+if not use_gemini:
+    try:
+        from ollama import AsyncClient
+        ollama_client = AsyncClient(host=OLLAMA_HOST)
+        use_ollama = True
+        print("[LLM] Ollama 활성화")
+    except Exception as e:
+        print(f"[LLM] Ollama 초기화 실패: {e}")
+
+if not use_gemini and not use_ollama:
+    raise ValueError("LLM을 사용할 수 없습니다. Gemini API 키를 설정하거나 Ollama를 실행하세요.")
+
+# LLM 호출 함수 (Gemini 우선, 실패 시 Ollama)
+async def call_llm(prompt: str) -> str:
+    """
+    Gemini를 먼저 시도하고, 실패하면 Ollama 사용
+    """
+    # Gemini 시도
+    if use_gemini:
+        try:
+            response = gemini_model.generate_content(prompt)
+            return response.text
+        except Exception as e:
+            print(f"[LLM] Gemini 호출 실패: {e}")
+            if not use_ollama:
+                raise
+    
+    # Ollama 시도
+    if use_ollama:
+        try:
+            response = await ollama_client.chat(
+                model=OLLAMA_MODEL,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            return response['message']['content']
+        except Exception as e:
+            print(f"[LLM] Ollama 호출 실패: {e}")
+            raise
+    
+    raise ValueError("사용 가능한 LLM이 없습니다.")
 
 # text_prompt.txt 파일 읽기
 def load_prompt_template():
@@ -219,14 +267,14 @@ async def generate_tutorial(request: ProjectRequest):
         # 프롬프트 구성
         full_prompt = f"{PROMPT_TEMPLATE}\n\n사용자 요청: {request.user_input}"
 
-        # Gemini API 호출
-        response = model.generate_content(full_prompt)
+        # LLM API 호출 (Gemini 우선, 실패 시 Ollama)
+        response_text = await call_llm(full_prompt)
 
         # 로그 저장
-        save_log(request.user_input, response.text)
+        save_log(request.user_input, response_text)
 
         return ProjectResponse(
-            response=response.text,
+            response=response_text,
             status="success"
         )
 
@@ -320,9 +368,8 @@ async def create_chat(request: ChatRequest, db: Session = Depends(get_db)):
         # 프롬프트 구성
         full_prompt = f"{PROMPT_TEMPLATE}\n\n사용자 요청: {request.user_input}"
 
-        # Gemini API 호출
-        llm_response = model.generate_content(full_prompt)
-        response_text = llm_response.text
+        # LLM API 호출 (Gemini 우선, 실패 시 Ollama)
+        response_text = await call_llm(full_prompt)
 
         # 로그 저장
         save_log(request.user_input, response_text)
