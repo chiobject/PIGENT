@@ -533,33 +533,59 @@ body {
     text-align: center;
 }
 
-/* 코드 뷰어 */
+/* 코드 뷰어 - VS Code 스타일 */
 .code-viewer {
     flex: 1;
-    padding: 20px;
     overflow-y: auto;
-    background: var(--bg-color);
-}
-
-.code-header {
-    margin-bottom: 12px;
-}
-
-.code-header h4 {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
+    overflow-x: hidden;
+    background: #1e1e1e;
+    display: flex;
+    flex-direction: column;
 }
 
 .code-viewer pre {
-    background: var(--code-bg);
-    color: var(--code-text);
+    flex: 1;
+    margin: 0;
     padding: 20px;
-    border-radius: 8px;
+    background: #1e1e1e;
     overflow-x: auto;
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
     line-height: 1.6;
+}
+
+.code-viewer code {
+    display: block;
+    white-space: pre;
+    color: #d4d4d4;
+}
+
+/* Python 문법 하이라이팅 */
+.code-viewer code.language-python {
+    counter-reset: line;
+}
+
+.code-viewer code.language-python::before {
+    content: '';
+}
+
+/* 줄 번호 스타일 */
+.code-line {
+    display: block;
+    position: relative;
+    padding-left: 50px;
+}
+
+.code-line::before {
+    content: counter(line);
+    counter-increment: line;
+    position: absolute;
+    left: 0;
+    width: 40px;
+    text-align: right;
+    color: #858585;
+    user-select: none;
+    padding-right: 10px;
 }
 
 /* 캔버스 컨트롤 */
@@ -608,7 +634,8 @@ body {
 }
 
 .execute-code-btn,
-.stop-code-btn {
+.stop-code-btn,
+.back-to-tutorial-btn {
     padding: 10px 20px;
     border: none;
     border-radius: 6px;
@@ -647,60 +674,119 @@ body {
     transform: translateY(-1px);
 }
 
-/* 터미널 섹션 */
+.back-to-tutorial-btn {
+    background: var(--bg-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.back-to-tutorial-btn:hover {
+    background: var(--border-color);
+    transform: translateY(-1px);
+}
+
+/* 터미널 섹션 - 실제 터미널 스타일 */
 .terminal-section {
     display: flex;
     flex-direction: column;
-    background: var(--sidebar-bg);
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
+    background: #000000;
+    border-radius: 8px;
     overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 .terminal-header {
-    padding: 16px 20px;
-    background: var(--bg-color);
-    border-bottom: 1px solid var(--border-color);
+    padding: 8px 12px;
+    background: #2d2d2d;
+    border-bottom: 1px solid #1a1a1a;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .terminal-header h3 {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 500;
+    color: #cccccc;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.terminal-header h3::before {
+    content: '●';
+    color: #4caf50;
+    font-size: 10px;
 }
 
 .terminal-status {
-    font-size: 13px;
-    padding: 4px 12px;
-    background: var(--border-color);
-    color: var(--text-secondary);
-    border-radius: 12px;
+    font-size: 11px;
+    padding: 3px 10px;
+    background: transparent;
+    color: #888888;
+    border-radius: 4px;
+    border: 1px solid #444444;
 }
 
 .terminal-status.running {
-    background: #48bb78;
-    color: white;
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+    border-color: #4caf50;
 }
 
 .terminal-output {
     flex: 1;
-    padding: 20px;
-    background: var(--code-bg);
-    color: var(--code-text);
-    font-family: 'Courier New', monospace;
+    padding: 16px;
+    background: #000000;
+    color: #00ff00;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     font-size: 13px;
-    line-height: 1.6;
+    line-height: 1.5;
     overflow-y: auto;
     white-space: pre-wrap;
+    min-height: 200px;
+}
+
+.terminal-output div {
+    color: #00ff00;
 }
 
 .terminal-welcome {
-    color: var(--text-secondary);
+    color: #666666;
     text-align: center;
     padding: 40px 20px;
+}
+
+.terminal-input-area {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: #000000;
+    border-top: 1px solid #1a1a1a;
+    gap: 8px;
+}
+
+.terminal-prompt {
+    color: #00ff00;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: bold;
+    user-select: none;
+}
+
+.terminal-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #00ff00;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    padding: 4px;
+}
+
+.terminal-input::placeholder {
+    color: #444444;
 }
 
 /* 입력 영역 */

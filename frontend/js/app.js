@@ -94,6 +94,27 @@ function setupEventListeners() {
     nextStepBtn.addEventListener('click', nextStep);
     executeCodeBtn.addEventListener('click', executeCode);
     stopCodeBtn.addEventListener('click', stopCode);
+    
+    // 튜토리얼로 돌아가기 버튼
+    const backToTutorialBtn = document.getElementById('backToTutorialBtn');
+    if (backToTutorialBtn) {
+        backToTutorialBtn.addEventListener('click', backToTutorial);
+    }
+
+    // 터미널 입력창
+    const terminalInput = document.getElementById('terminalInput');
+    if (terminalInput) {
+        terminalInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const command = terminalInput.value.trim();
+                if (command) {
+                    appendToTerminal(`$ ${command}`);
+                    appendToTerminal('명령어 실행 기능은 현재 지원되지 않습니다.');
+                    terminalInput.value = '';
+                }
+            }
+        });
+    }
 }
 
 // 텍스트 영역 자동 크기 조절
@@ -268,8 +289,10 @@ function addMessage(type, content, wiringContent = null, stepsContent = null) {
 
     messagesContainer.appendChild(messageDiv);
 
-    // 스크롤을 최하단으로
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    // 스크롤을 최하단으로 (비동기로 처리하여 렌더링 완료 후 스크롤)
+    setTimeout(() => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }, 100);
     
     return messageDiv; // messageDiv 반환
 }
@@ -590,6 +613,24 @@ function enterTutorialMode(botResponse, wiringContent = null, stepsContent = nul
 
     currentStep = 0;
 
+    // UI 초기화 (튜토리얼 1단계부터 시작)
+    canvasViewer.style.display = 'flex';
+    codeViewer.style.display = 'none';
+    document.querySelector('.canvas-header h3').textContent = '회로 연결 가이드';
+    stepIndicator.style.display = 'flex';
+    document.querySelector('.navigation-buttons').style.display = 'flex';
+    executeCodeBtn.style.display = 'flex';
+    executeCodeBtn.disabled = false;
+    stopCodeBtn.style.display = 'none';
+    const backToTutorialBtn = document.getElementById('backToTutorialBtn');
+    if (backToTutorialBtn) {
+        backToTutorialBtn.style.display = 'none';
+    }
+    isCodeRunning = false;
+    terminalStatus.textContent = '대기 중';
+    terminalStatus.classList.remove('running');
+    terminalOutput.innerHTML = '<div class="terminal-welcome">PIGENT 터미널<br>코드를 실행하면 출력 결과가 여기에 표시됩니다.</div>';
+
     // WIRING 콘텐츠로 회로도 렌더링
     if (wiringContent && renderer) {
         renderCircuitDiagram(wiringContent);
@@ -684,11 +725,28 @@ async function executeCode() {
     // 캔버스를 코드 뷰어로 전환
     canvasViewer.style.display = 'none';
     codeViewer.style.display = 'block';
-    generatedCode.textContent = currentCode;
+    
+    // 코드를 줄 번호와 함께 표시
+    displayCodeWithLineNumbers(currentCode);
+
+    // 제목을 "코드창"으로 변경
+    document.querySelector('.canvas-header h3').textContent = '코드창';
+
+    // 단계 표시 숨기기
+    stepIndicator.style.display = 'none';
+
+    // 이전/다음 버튼 숨기기
+    document.querySelector('.navigation-buttons').style.display = 'none';
 
     // 실행 버튼 숨기고 중지 버튼 표시
     executeCodeBtn.style.display = 'none';
     stopCodeBtn.style.display = 'flex';
+
+    // "튜토리얼로 돌아가기" 버튼 표시
+    const backToTutorialBtn = document.getElementById('backToTutorialBtn');
+    if (backToTutorialBtn) {
+        backToTutorialBtn.style.display = 'flex';
+    }
 
     // 터미널 상태 변경
     terminalStatus.textContent = '실행 중';
@@ -783,6 +841,56 @@ function stopCode() {
     appendToTerminal('\n> 실행이 중지되었습니다.\n');
 }
 
+// 튜토리얼로 돌아가기
+function backToTutorial() {
+    // 실행 중인 경우 확인 메시지 표시
+    if (isCodeRunning) {
+        if (!confirm('코드 실행이 중지됩니다. 계속하시겠습니까?')) {
+            return;
+        }
+        // 코드 중지
+        isCodeRunning = false;
+        terminalStatus.textContent = '중지됨';
+        terminalStatus.classList.remove('running');
+        appendToTerminal('\n> 실행이 중지되었습니다.\n');
+    }
+
+    // 1단계로 초기화
+    currentStep = 0;
+
+    // UI 복원
+    canvasViewer.style.display = 'flex';
+    codeViewer.style.display = 'none';
+
+    // 제목 복원
+    document.querySelector('.canvas-header h3').textContent = '회로 연결 가이드';
+
+    // 단계 표시 복원
+    stepIndicator.style.display = 'flex';
+
+    // 이전/다음 버튼 복원
+    document.querySelector('.navigation-buttons').style.display = 'flex';
+
+    // 버튼 상태 복원
+    executeCodeBtn.style.display = 'flex';
+    executeCodeBtn.disabled = false;
+    stopCodeBtn.style.display = 'none';
+
+    // "튜토리얼로 돌아가기" 버튼 숨기기
+    const backToTutorialBtn = document.getElementById('backToTutorialBtn');
+    if (backToTutorialBtn) {
+        backToTutorialBtn.style.display = 'none';
+    }
+
+    // 튜토리얼 단계 업데이트
+    updateTutorialStep();
+
+    // 터미널 초기화
+    terminalStatus.textContent = '대기 중';
+    terminalStatus.classList.remove('running');
+    terminalOutput.innerHTML = '<div class="terminal-welcome">PIGENT 터미널<br>코드를 실행하면 출력 결과가 여기에 표시됩니다.</div>';
+}
+
 // 터미널에 텍스트 추가
 function appendToTerminal(text) {
     const line = document.createElement('div');
@@ -791,8 +899,56 @@ function appendToTerminal(text) {
     terminalOutput.scrollTop = terminalOutput.scrollHeight;
 }
 
+// 코드를 줄 번호와 함께 표시하고 문법 하이라이팅 적용
+function displayCodeWithLineNumbers(code) {
+    const lines = code.split('\n');
+    let highlightedHTML = '';
+    
+    lines.forEach((line, index) => {
+        const highlightedLine = highlightPythonSyntax(line);
+        highlightedHTML += `<span class="code-line">${highlightedLine}</span>\n`;
+    });
+    
+    generatedCode.innerHTML = highlightedHTML;
+}
+
+// Python 문법 하이라이팅
+function highlightPythonSyntax(line) {
+    // 주석
+    line = line.replace(/(#.*$)/g, '<span style="color: #6a9955;">$1</span>');
+    
+    // 문자열 (큰따옴표)
+    line = line.replace(/("(?:[^"\\]|\\.)*")/g, '<span style="color: #ce9178;">$1</span>');
+    
+    // 문자열 (작은따옴표)
+    line = line.replace(/('(?:[^'\\]|\\.)*')/g, '<span style="color: #ce9178;">$1</span>');
+    
+    // 키워드
+    const keywords = ['import', 'from', 'def', 'class', 'if', 'elif', 'else', 'for', 'while', 'return', 'try', 'except', 'finally', 'with', 'as', 'pass', 'break', 'continue', 'and', 'or', 'not', 'in', 'is', 'None', 'True', 'False', 'lambda', 'yield', 'global', 'nonlocal', 'assert', 'del', 'raise'];
+    keywords.forEach(keyword => {
+        const regex = new RegExp(`\\b(${keyword})\\b`, 'g');
+        line = line.replace(regex, '<span style="color: #569cd6;">$1</span>');
+    });
+    
+    // 함수 호출
+    line = line.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/g, '<span style="color: #dcdcaa;">$1</span>(');
+    
+    // 숫자
+    line = line.replace(/\b(\d+)\b/g, '<span style="color: #b5cea8;">$1</span>');
+    
+    return line;
+}
+
 // 채팅으로 돌아가기
 function backToChat() {
+    // 코드 실행 중인 경우 확인 메시지
+    if (isCodeRunning) {
+        if (!confirm('코드 실행이 중지됩니다. 계속하시겠습니까?')) {
+            return;
+        }
+        stopCode();
+    }
+
     // 튜토리얼 모드 숨기기
     tutorialMode.style.display = 'none';
     messagesContainer.style.display = 'flex';
@@ -800,9 +956,6 @@ function backToChat() {
     inputContainer.style.display = 'block'; // 입력창 다시 표시
 
     // 상태 초기화
-    if (isCodeRunning) {
-        stopCode();
-    }
 
     // UI 초기화
     canvasViewer.style.display = 'flex';
