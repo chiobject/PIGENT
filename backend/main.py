@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -14,6 +14,9 @@ import re
 from typing import Optional
 import webbrowser
 import threading
+import asyncio
+import tempfile
+import sys
 
 # 데이터베이스 import
 from database import engine, get_db, Base
@@ -352,6 +355,114 @@ async def execute_code(request: CodeExecuteRequest, db: Session = Depends(get_db
         stderr=stderr
     )
 
+# ==================== WebSocket 실시간 코드 실행 ====================
+
+@app.websocket("/ws/execute")
+async def websocket_execute_code(websocket: WebSocket):
+    """
+    WebSocket을 통한 실시간 코드 실행
+    """
+    await websocket.accept()
+    print("WebSocket 연결됨")
+    
+    try:
+        # 클라이언트로부터 코드 받기
+        print("코드 수신 대기 중...")
+        code = await websocket.receive_text()
+        print(f"코드 수신 완료 (길이: {len(code)})")
+        
+        # VM 체크
+        import vm_manager
+        print("VM 체크 중...")
+        vm_manager.recreate_slave_vm_if_needed()
+        python_exe = vm_manager.get_slave_python_executable()
+        print(f"Python 실행 파일: {python_exe}")
+        
+        if not python_exe:
+            error_msg = "ERROR: SlaveVM을 찾을 수 없습니다"
+            print(error_msg)
+            await websocket.send_text(error_msg)
+            await websocket.close()
+            return
+        
+        # 임시 파일 생성
+        print("임시 파일 생성 중...")
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False, encoding='utf-8') as temp_file:
+            temp_file.write(code)
+            temp_file_path = temp_file.name
+        print(f"임시 파일 생성 완료: {temp_file_path}")
+        
+        # 환경변수 설정
+        env = os.environ.copy()
+        if sys.platform == "win32" or sys.platform == "darwin":
+            env['GPIOZERO_PIN_FACTORY'] = 'mock'
+        env['PYTHONUNBUFFERED'] = '1'  # 출력 버퍼링 비활성화
+        env['PYTHONIOENCODING'] = 'utf-8'  # Python 출력 인코딩을 UTF-8로 설정
+        
+        # 비동기 서브프로세스 생성
+        print("서브프로세스 시작 중...")
+        process = await asyncio.create_subprocess_exec(
+            str(python_exe), temp_file_path,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.STDOUT,
+            env=env
+        )
+        print("서브프로세스 시작됨")
+        
+        # 실시간으로 출력 읽고 전송
+        line_count = 0
+        while True:
+            line = await process.stdout.readline()
+            if not line:
+                break
+            
+            # Windows에서 한글 출력을 위해 cp949 또는 utf-8로 시도
+            try:
+                output = line.decode('utf-8')
+            except UnicodeDecodeError:
+                try:
+                    output = line.decode('cp949')
+                except UnicodeDecodeError:
+                    output = line.decode('utf-8', errors='replace')
+            
+            await websocket.send_text(output)
+            line_count += 1
+            print(f"출력 라인 전송: {line_count}")
+        
+        # 프로세스 완료 대기
+        await process.wait()
+        print(f"프로세스 종료 (코드: {process.returncode})")
+        
+        # 결과 전송
+        if process.returncode == 0:
+            await websocket.send_text("\n>>> 실행 완료")
+        else:
+            await websocket.send_text(f"\n>>> 오류 발생 (종료 코드: {process.returncode})")
+        
+        # 임시 파일 삭제
+        try:
+            Path(temp_file_path).unlink()
+            print("임시 파일 삭제 완료")
+        except Exception as e:
+            print(f"임시 파일 삭제 실패: {e}")
+            
+    except WebSocketDisconnect:
+        print("WebSocket 연결 해제됨")
+    except Exception as e:
+        import traceback
+        print(f"WebSocket 오류: {e}")
+        print(f"상세 오류:\n{traceback.format_exc()}")
+        try:
+            await websocket.send_text(f"ERROR: {str(e)}")
+        except:
+            pass
+    finally:
+        try:
+            await websocket.close()
+            print("WebSocket 종료 완료")
+        except:
+            pass
+
 # ==================== Chat API ====================
 
 @app.post("/chat", response_model=ChatResponse)
@@ -446,4 +557,9 @@ async def get_board_chats(board_id: int, db: Session = Depends(get_db)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    
+    # Windows에서 asyncio subprocess 지원을 위한 설정
+    if sys.platform == 'win32':
+        asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+    
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=False)
