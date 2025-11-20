@@ -113,10 +113,7 @@
 
                             <!-- 코드 뷰어 (실행 모드에서 표시) -->
                             <div class="code-viewer" id="codeViewer" style="display: none;">
-                                <div class="code-header">
-                                    <h4>생성된 코드</h4>
-                                </div>
-                                <pre><code id="generatedCode"></code></pre>
+                                <pre><code id="generatedCode" class="language-python"></code></pre>
                             </div>
 
                             <div class="canvas-controls">
@@ -136,6 +133,12 @@
                                 </div>
 
                                 <div class="execution-buttons">
+                                    <button class="back-to-tutorial-btn" id="backToTutorialBtn" style="display: none;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                                        </svg>
+                                        튜토리얼로 돌아가기
+                                    </button>
                                     <button class="execute-code-btn" id="executeCodeBtn" disabled>
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <polygon points="5 3 19 12 5 21 5 3"></polygon>
@@ -163,6 +166,10 @@
                                     PIGENT 터미널<br>
                                     코드를 실행하면 출력 결과가 여기에 표시됩니다.
                                 </div>
+                            </div>
+                            <div class="terminal-input-area">
+                                <span class="terminal-prompt">$</span>
+                                <input type="text" class="terminal-input" id="terminalInput" placeholder="명령어 입력...">
                             </div>
                         </div>
                     </div>
