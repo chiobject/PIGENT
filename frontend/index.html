@@ -103,9 +103,11 @@
                             </div>
 
                             <div class="canvas-viewer" id="canvasViewer">
-                                <div class="circuit-image">
-                                    <img id="circuitImage" src="" alt="회로 다이어그램">
-                                    <p class="circuit-description" id="circuitDescription">GPIO 17번 핀에 LED를 연결하세요</p>
+                                <div style="width: 100%; display: flex; flex-direction: column; gap: 16px;">
+                                    <div class="circuit-canvas" id="circuitCanvas">
+                                        <!-- 회로도 SVG가 여기에 렌더링됩니다 -->
+                                    </div>
+                                    <p class="circuit-description" id="circuitDescription"></p>
                                 </div>
                             </div>
 
@@ -188,6 +190,12 @@
     </div>
 
     <!-- <script src="/static/js/mockData.js"></script> -->
+    <!-- Hardware Renderer Scripts -->
+    <script src="/static/hardwareRenderer/componentLibrary.js"></script>
+    <script src="/static/hardwareRenderer/wireRouter.js"></script>
+    <script src="/static/hardwareRenderer/parser.js"></script>
+    <script src="/static/hardwareRenderer/renderer.js"></script>
+    <script src="/static/hardwareRenderer/componentSVGs.js"></script>
     <script src="/static/js/app.js"></script>
 </body>
 </html>

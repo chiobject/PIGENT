@@ -1,0 +1,12 @@
+{
+  "id": "led",
+  "name": "LED",
+  "type": "component",
+  "image": "led.svg",
+  "width": 60,
+  "height": 100,
+  "pins": [
+    {"name": "ANODE", "number": 1, "x": 22, "y": 75, "type": "gpio"},
+    {"name": "CATHODE", "number": 2, "x": 39, "y": 75, "type": "ground"}
+  ]
+}

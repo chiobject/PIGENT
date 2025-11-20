@@ -1,0 +1,25 @@
+<svg width="60" height="100" viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- LED 본체 (흰색) - 상단만 둥글게 -->
+  <path d="M 10 45 L 10 15 Q 10 5 20 5 L 40 5 Q 50 5 50 15 L 50 45 Z" fill="#ffffff" stroke="#cccccc" stroke-width="2"/>
+
+  <!-- LED 베이스 (플라스틱 하우징) -->
+  <rect x="15" y="45" width="30" height="10" fill="#e0e0e0" stroke="#999999" stroke-width="1"/>
+
+  <!-- 내부 칩 표시 -->
+  <rect x="25" y="30" width="10" height="8" fill="#d0d0d0" opacity="0.5"/>
+
+  <!-- 다리 (핀) -->
+  <g id="pins">
+    <!-- 양극 (+) - 긴 다리 -->
+    <rect x="20" y="55" width="3" height="40" fill="#808080" stroke="#666666" stroke-width="0.5"/>
+    <text x="22" y="68" text-anchor="middle" font-size="10" fill="#000">+</text>
+
+    <!-- 음극 (-) - 짧은 다리 -->
+    <rect x="37" y="55" width="3" height="35" fill="#808080" stroke="#666666" stroke-width="0.5"/>
+    <text x="39" y="68" text-anchor="middle" font-size="10" fill="#000">-</text>
+  </g>
+
+  <!-- 핀 레이블 (하단) -->
+  <text x="22" y="98" text-anchor="middle" font-size="6" fill="#666">ANODE</text>
+  <text x="39" y="93" text-anchor="middle" font-size="6" fill="#666">CATHODE</text>
+</svg>

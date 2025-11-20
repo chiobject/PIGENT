@@ -1,0 +1,13 @@
+{
+  "id": "dht11",
+  "name": "DHT11 Temperature & Humidity Sensor",
+  "type": "sensor",
+  "image": "dht11.svg",
+  "width": 80,
+  "height": 120,
+  "pins": [
+    {"name": "VCC", "number": 1, "x": 25, "y": 105, "type": "power"},
+    {"name": "DATA", "number": 2, "x": 40, "y": 105, "type": "gpio"},
+    {"name": "GND", "number": 3, "x": 55, "y": 105, "type": "ground"}
+  ]
+}
