@@ -108,8 +108,17 @@ function setupEventListeners() {
             if (e.key === 'Enter') {
                 const command = terminalInput.value.trim();
                 if (command) {
+                    // 터미널에 입력 표시
                     appendToTerminal(`$ ${command}`);
-                    appendToTerminal('명령어 실행 기능은 현재 지원되지 않습니다.');
+                    
+                    // WebSocket으로 입력 전송
+                    if (currentWebSocket && currentWebSocket.readyState === WebSocket.OPEN) {
+                        console.log('터미널 입력 전송:', command);
+                        currentWebSocket.send('INPUT:' + command);
+                    } else {
+                        appendToTerminal('오류: 실행 중인 프로세스가 없습니다.');
+                    }
+                    
                     terminalInput.value = '';
                 }
             }
@@ -780,10 +789,15 @@ async function executeCode() {
 async function executeCodeWithWebSocket() {
     return new Promise((resolve, reject) => {
         const ws = new WebSocket('ws://localhost:8000/ws/execute');
+        currentWebSocket = ws;
+        
+        console.log('WebSocket 연결 시도 중...');
         
         ws.onopen = () => {
+            console.log('WebSocket 연결 성공');
             // 코드 전송
             ws.send(currentCode);
+            console.log('코드 전송 완료');
         };
         
         ws.onmessage = (event) => {
@@ -795,10 +809,13 @@ async function executeCodeWithWebSocket() {
         ws.onerror = (error) => {
             console.error('WebSocket 오류:', error);
             appendToTerminal('\n>>> WebSocket 연결 오류');
+            currentWebSocket = null;
             reject(error);
         };
         
-        ws.onclose = () => {
+        ws.onclose = (event) => {
+            console.log('WebSocket 연결 종료됨', event);
+            currentWebSocket = null;
             resolve();
         };
     });
@@ -830,6 +847,14 @@ async function simulateCodeExecution() {
 function stopCode() {
     isCodeRunning = false;
 
+    // WebSocket 연결 종료 (백엔드에 중지 신호 전송)
+    if (currentWebSocket && currentWebSocket.readyState === WebSocket.OPEN) {
+        console.log('WebSocket 연결 종료 중...');
+        currentWebSocket.close();
+        currentWebSocket = null;
+        console.log('WebSocket 연결 종료됨');
+    }
+
     // 버튼 상태 복원
     executeCodeBtn.style.display = 'flex';
     stopCodeBtn.style.display = 'none';
@@ -850,6 +875,14 @@ function backToTutorial() {
         }
         // 코드 중지
         isCodeRunning = false;
+        
+        // WebSocket 연결 종료
+        if (currentWebSocket && currentWebSocket.readyState === WebSocket.OPEN) {
+            console.log('WebSocket 연결 종료 중...');
+            currentWebSocket.close();
+            currentWebSocket = null;
+        }
+        
         terminalStatus.textContent = '중지됨';
         terminalStatus.classList.remove('running');
         appendToTerminal('\n> 실행이 중지되었습니다.\n');
