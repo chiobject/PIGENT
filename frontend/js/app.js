@@ -703,29 +703,47 @@ async function executeCode() {
             // 목업 실행 시뮬레이션
             await simulateCodeExecution();
         } else {
-            // 실제 API 호출
-            const response = await fetch(`${API_BASE_URL}/boards/execute`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ code: currentCode })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                appendToTerminal(data.stdout || '실행 완료 (출력 없음)');
-                if (data.stderr) {
-                    appendToTerminal(`\n[경고/오류]\n${data.stderr}`);
-                }
-            } else {
-                appendToTerminal(`오류: ${data.stderr || '알 수 없는 오류'}`);
-            }
+            // WebSocket을 통한 실시간 코드 실행
+            await executeCodeWithWebSocket();
         }
     } catch (error) {
         appendToTerminal(`연결 오류: ${error.message}`);
+    } finally {
+        // 실행 완료 후 버튼 상태 복원
+        isCodeRunning = false;
+        executeCodeBtn.style.display = 'flex';
+        stopCodeBtn.style.display = 'none';
+        terminalStatus.textContent = '대기 중';
+        terminalStatus.classList.remove('running');
     }
+}
+
+// WebSocket을 통한 실시간 코드 실행
+async function executeCodeWithWebSocket() {
+    return new Promise((resolve, reject) => {
+        const ws = new WebSocket('ws://localhost:8000/ws/execute');
+        
+        ws.onopen = () => {
+            // 코드 전송
+            ws.send(currentCode);
+        };
+        
+        ws.onmessage = (event) => {
+            const message = event.data;
+            // 실시간으로 출력 추가
+            appendToTerminal(message);
+        };
+        
+        ws.onerror = (error) => {
+            console.error('WebSocket 오류:', error);
+            appendToTerminal('\n>>> WebSocket 연결 오류');
+            reject(error);
+        };
+        
+        ws.onclose = () => {
+            resolve();
+        };
+    });
 }
 
 // 목업 코드 실행 시뮬레이션

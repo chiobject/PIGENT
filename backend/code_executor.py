@@ -90,7 +90,7 @@ def execute_code(db: Session, code: str) -> Tuple[bool, str, str]:
             [str(python_exe), temp_file_path],
             capture_output=True,
             text=True,
-            timeout=30,  # 30초 타임아웃
+            timeout=None,  # 타임아웃 제한 없음
             env=env  # 환경변수 전달
         )
         
