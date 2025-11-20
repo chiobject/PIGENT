@@ -40,13 +40,36 @@ let tutorialSteps = [];
 let currentCode = '';
 let isCodeRunning = false;
 
+// Hardware Renderer 인스턴스
+let componentLibrary = null;
+let wireRouter = null;
+let parser = null;
+let renderer = null;
+
 // 초기화
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Hardware Renderer 초기화
+    await initHardwareRenderer();
+    
     loadBoards();
     setupEventListeners();
     autoResizeTextarea();
     loadThemePreference();
 });
+
+// Hardware Renderer 초기화
+async function initHardwareRenderer() {
+    try {
+        componentLibrary = new ComponentLibrary();
+        await componentLibrary.init();
+        wireRouter = new WireRouter();
+        parser = new Parser();
+        renderer = new Renderer(componentLibrary, wireRouter);
+        console.log('Hardware Renderer 초기화 완료');
+    } catch (error) {
+        console.error('Hardware Renderer 초기화 실패:', error);
+    }
+}
 
 // 이벤트 리스너 설정
 function setupEventListeners() {
@@ -137,6 +160,13 @@ async function sendMessage() {
         }
         
         const data = await response.json();
+        
+        console.log('===== API 응답 데이터 =====');
+        console.log('response_type:', data.response_type);
+        console.log('code_content:', data.code_content);
+        console.log('wiring_content:', data.wiring_content);
+        console.log('steps_content:', data.steps_content);
+        console.log('==========================');
 
         // 로딩 화면 숨기기 및 메시지 컨테이너 표시
         loadingScreen.style.display = 'none';
@@ -152,7 +182,7 @@ async function sendMessage() {
             if (data.code_content) {
                 botResponse += `\n\n\`\`\`python\n${data.code_content}\n\`\`\``;
             }
-            addMessage('bot', botResponse || data.plain_text || '응답 내용 없음');
+            const messageDiv = addMessage('bot', botResponse || data.plain_text || '응답 내용 없음', data.wiring_content, data.steps_content);
         } else {
             addMessage('bot', data.plain_text || '응답 내용 없음');
         }
@@ -171,7 +201,7 @@ async function sendMessage() {
 }
 
 // 메시지 추가
-function addMessage(type, content) {
+function addMessage(type, content, wiringContent = null, stepsContent = null) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${type}`;
 
@@ -181,6 +211,16 @@ function addMessage(type, content) {
 
     const messageContent = document.createElement('div');
     messageContent.className = 'message-content';
+    
+    // wiring과 steps 데이터를 messageDiv에 저장
+    if (wiringContent) {
+        messageDiv.dataset.wiring = wiringContent;
+        console.log('Wiring 데이터 저장됨:', wiringContent);
+    }
+    if (stepsContent) {
+        messageDiv.dataset.steps = stepsContent;
+        console.log('Steps 데이터 저장됨:', stepsContent);
+    }
 
     // 봇 메시지이고 코드가 포함된 경우
     if (type === 'bot' && content.includes('```python')) {
@@ -203,7 +243,19 @@ function addMessage(type, content) {
             </svg>
             실행 준비가 되었습니다!
         `;
-        readyButton.onclick = () => enterTutorialMode(content);
+        readyButton.onclick = () => {
+            // messageDiv에 저장된 wiring과 steps 데이터 가져오기
+            const wiringContent = messageDiv.dataset.wiring || null;
+            const stepsContent = messageDiv.dataset.steps || null;
+            
+            console.log('===== 실행 준비 버튼 클릭 =====');
+            console.log('Content:', content);
+            console.log('Wiring Content:', wiringContent);
+            console.log('Steps Content:', stepsContent);
+            console.log('================================');
+            
+            enterTutorialMode(content, wiringContent, stepsContent);
+        };
         messageContent.appendChild(readyButton);
     } else {
         // 일반 메시지 처리
@@ -218,6 +270,8 @@ function addMessage(type, content) {
 
     // 스크롤을 최하단으로
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    return messageDiv; // messageDiv 반환
 }
 
 // 메시지 내용 포맷팅 (코드 블록 처리)
@@ -466,7 +520,8 @@ async function loadBoard(boardId) {
                 if (chat.code_content) {
                     botResponse += `\n\n\`\`\`python\n${chat.code_content}\n\`\`\``;
                 }
-                addMessage('bot', botResponse || chat.plain_text || '응답 내용 없음');
+                // wiring_content와 steps_content도 함께 전달
+                addMessage('bot', botResponse || chat.plain_text || '응답 내용 없음', chat.wiring_content, chat.steps_content);
             } else {
                 addMessage('bot', chat.plain_text || '응답 내용 없음');
             }
@@ -512,30 +567,33 @@ function loadThemePreference() {
 // ============ 튜토리얼 모드 함수들 ============
 
 // 튜토리얼 모드 진입
-function enterTutorialMode(botResponse) {
+function enterTutorialMode(botResponse, wiringContent = null, stepsContent = null) {
     // 코드 추출
     const codeMatch = botResponse.match(/```python\n([\s\S]*?)```/);
     if (codeMatch) {
         currentCode = codeMatch[1].trim();
     }
 
-    // 튜토리얼 단계 설정 (목업 데이터)
-    tutorialSteps = [
-        {
-            description: 'GPIO 17번 핀에 LED의 긴 다리(+)를 연결하세요',
-            image: '' // 실제로는 이미지 URL
-        },
-        {
-            description: 'LED의 짧은 다리(-)를 220Ω 저항에 연결하세요',
-            image: ''
-        },
-        {
-            description: '저항의 반대편을 GND 핀에 연결하세요',
-            image: ''
-        }
-    ];
+    // STEPS 콘텐츠 파싱 (줄 단위로 분리)
+    if (stepsContent) {
+        tutorialSteps = stepsContent.split('\n')
+            .filter(line => line.trim())
+            .map(line => ({
+                description: line.trim()
+            }));
+    } else {
+        // 기본 단계 설정 (STEPS가 없는 경우)
+        tutorialSteps = [
+            { description: '회로를 연결해주세요' }
+        ];
+    }
 
     currentStep = 0;
+
+    // WIRING 콘텐츠로 회로도 렌더링
+    if (wiringContent && renderer) {
+        renderCircuitDiagram(wiringContent);
+    }
 
     // UI 전환
     messagesContainer.style.display = 'none';
@@ -545,6 +603,37 @@ function enterTutorialMode(botResponse) {
 
     // 첫 단계 표시
     updateTutorialStep();
+}
+
+// 회로도 렌더링 함수
+async function renderCircuitDiagram(wiringText) {
+    try {
+        const circuitCanvas = document.getElementById('circuitCanvas');
+        
+        if (!parser || !renderer) {
+            console.error('Hardware Renderer가 초기화되지 않았습니다');
+            circuitCanvas.innerHTML = '<p style="color: #ef4444; padding: 20px;">회로도 렌더러를 초기화할 수 없습니다.</p>';
+            return;
+        }
+
+        // WIRING 텍스트를 AST로 파싱
+        const ast = parser.parse(wiringText);
+        
+        if (parser.hasErrors()) {
+            console.error('WIRING 파싱 오류:', parser.getErrors());
+            circuitCanvas.innerHTML = '<p style="color: #ef4444; padding: 20px;">회로도를 파싱할 수 없습니다.</p>';
+            return;
+        }
+
+        // AST를 회로도로 렌더링
+        await renderer.render(ast, circuitCanvas);
+        console.log('회로도 렌더링 완료');
+        
+    } catch (error) {
+        console.error('회로도 렌더링 실패:', error);
+        const circuitCanvas = document.getElementById('circuitCanvas');
+        circuitCanvas.innerHTML = '<p style="color: #ef4444; padding: 20px;">회로도 렌더링 중 오류가 발생했습니다.</p>';
+    }
 }
 
 // 튜토리얼 단계 업데이트

@@ -1,0 +1,2410 @@
+{
+  "id": "breadboard",
+  "name": "Breadboard (400-point)",
+  "type": "breadboard",
+  "image": "breadboard.svg",
+  "width": 500,
+  "height": 350,
+  "pins": [
+    {
+      "name": "L+1",
+      "x": 20,
+      "y": 40,
+      "type": "power"
+    },
+    {
+      "name": "L-1",
+      "x": 35,
+      "y": 40,
+      "type": "ground"
+    },
+    {
+      "name": "L+2",
+      "x": 20,
+      "y": 51,
+      "type": "power"
+    },
+    {
+      "name": "L-2",
+      "x": 35,
+      "y": 51,
+      "type": "ground"
+    },
+    {
+      "name": "L+3",
+      "x": 20,
+      "y": 62,
+      "type": "power"
+    },
+    {
+      "name": "L-3",
+      "x": 35,
+      "y": 62,
+      "type": "ground"
+    },
+    {
+      "name": "L+4",
+      "x": 20,
+      "y": 73,
+      "type": "power"
+    },
+    {
+      "name": "L-4",
+      "x": 35,
+      "y": 73,
+      "type": "ground"
+    },
+    {
+      "name": "L+5",
+      "x": 20,
+      "y": 84,
+      "type": "power"
+    },
+    {
+      "name": "L-5",
+      "x": 35,
+      "y": 84,
+      "type": "ground"
+    },
+    {
+      "name": "L+6",
+      "x": 20,
+      "y": 95,
+      "type": "power"
+    },
+    {
+      "name": "L-6",
+      "x": 35,
+      "y": 95,
+      "type": "ground"
+    },
+    {
+      "name": "L+7",
+      "x": 20,
+      "y": 106,
+      "type": "power"
+    },
+    {
+      "name": "L-7",
+      "x": 35,
+      "y": 106,
+      "type": "ground"
+    },
+    {
+      "name": "L+8",
+      "x": 20,
+      "y": 117,
+      "type": "power"
+    },
+    {
+      "name": "L-8",
+      "x": 35,
+      "y": 117,
+      "type": "ground"
+    },
+    {
+      "name": "L+9",
+      "x": 20,
+      "y": 128,
+      "type": "power"
+    },
+    {
+      "name": "L-9",
+      "x": 35,
+      "y": 128,
+      "type": "ground"
+    },
+    {
+      "name": "L+10",
+      "x": 20,
+      "y": 139,
+      "type": "power"
+    },
+    {
+      "name": "L-10",
+      "x": 35,
+      "y": 139,
+      "type": "ground"
+    },
+    {
+      "name": "L+11",
+      "x": 20,
+      "y": 150,
+      "type": "power"
+    },
+    {
+      "name": "L-11",
+      "x": 35,
+      "y": 150,
+      "type": "ground"
+    },
+    {
+      "name": "L+12",
+      "x": 20,
+      "y": 161,
+      "type": "power"
+    },
+    {
+      "name": "L-12",
+      "x": 35,
+      "y": 161,
+      "type": "ground"
+    },
+    {
+      "name": "L+13",
+      "x": 20,
+      "y": 172,
+      "type": "power"
+    },
+    {
+      "name": "L-13",
+      "x": 35,
+      "y": 172,
+      "type": "ground"
+    },
+    {
+      "name": "L+14",
+      "x": 20,
+      "y": 183,
+      "type": "power"
+    },
+    {
+      "name": "L-14",
+      "x": 35,
+      "y": 183,
+      "type": "ground"
+    },
+    {
+      "name": "L+15",
+      "x": 20,
+      "y": 194,
+      "type": "power"
+    },
+    {
+      "name": "L-15",
+      "x": 35,
+      "y": 194,
+      "type": "ground"
+    },
+    {
+      "name": "L+16",
+      "x": 20,
+      "y": 205,
+      "type": "power"
+    },
+    {
+      "name": "L-16",
+      "x": 35,
+      "y": 205,
+      "type": "ground"
+    },
+    {
+      "name": "L+17",
+      "x": 20,
+      "y": 216,
+      "type": "power"
+    },
+    {
+      "name": "L-17",
+      "x": 35,
+      "y": 216,
+      "type": "ground"
+    },
+    {
+      "name": "L+18",
+      "x": 20,
+      "y": 227,
+      "type": "power"
+    },
+    {
+      "name": "L-18",
+      "x": 35,
+      "y": 227,
+      "type": "ground"
+    },
+    {
+      "name": "L+19",
+      "x": 20,
+      "y": 238,
+      "type": "power"
+    },
+    {
+      "name": "L-19",
+      "x": 35,
+      "y": 238,
+      "type": "ground"
+    },
+    {
+      "name": "L+20",
+      "x": 20,
+      "y": 249,
+      "type": "power"
+    },
+    {
+      "name": "L-20",
+      "x": 35,
+      "y": 249,
+      "type": "ground"
+    },
+    {
+      "name": "L+21",
+      "x": 20,
+      "y": 260,
+      "type": "power"
+    },
+    {
+      "name": "L-21",
+      "x": 35,
+      "y": 260,
+      "type": "ground"
+    },
+    {
+      "name": "L+22",
+      "x": 20,
+      "y": 271,
+      "type": "power"
+    },
+    {
+      "name": "L-22",
+      "x": 35,
+      "y": 271,
+      "type": "ground"
+    },
+    {
+      "name": "L+23",
+      "x": 20,
+      "y": 282,
+      "type": "power"
+    },
+    {
+      "name": "L-23",
+      "x": 35,
+      "y": 282,
+      "type": "ground"
+    },
+    {
+      "name": "L+24",
+      "x": 20,
+      "y": 293,
+      "type": "power"
+    },
+    {
+      "name": "L-24",
+      "x": 35,
+      "y": 293,
+      "type": "ground"
+    },
+    {
+      "name": "L+25",
+      "x": 20,
+      "y": 304,
+      "type": "power"
+    },
+    {
+      "name": "L-25",
+      "x": 35,
+      "y": 304,
+      "type": "ground"
+    },
+    {
+      "name": "R+1",
+      "x": 460,
+      "y": 40,
+      "type": "power"
+    },
+    {
+      "name": "R-1",
+      "x": 475,
+      "y": 40,
+      "type": "ground"
+    },
+    {
+      "name": "R+2",
+      "x": 460,
+      "y": 51,
+      "type": "power"
+    },
+    {
+      "name": "R-2",
+      "x": 475,
+      "y": 51,
+      "type": "ground"
+    },
+    {
+      "name": "R+3",
+      "x": 460,
+      "y": 62,
+      "type": "power"
+    },
+    {
+      "name": "R-3",
+      "x": 475,
+      "y": 62,
+      "type": "ground"
+    },
+    {
+      "name": "R+4",
+      "x": 460,
+      "y": 73,
+      "type": "power"
+    },
+    {
+      "name": "R-4",
+      "x": 475,
+      "y": 73,
+      "type": "ground"
+    },
+    {
+      "name": "R+5",
+      "x": 460,
+      "y": 84,
+      "type": "power"
+    },
+    {
+      "name": "R-5",
+      "x": 475,
+      "y": 84,
+      "type": "ground"
+    },
+    {
+      "name": "R+6",
+      "x": 460,
+      "y": 95,
+      "type": "power"
+    },
+    {
+      "name": "R-6",
+      "x": 475,
+      "y": 95,
+      "type": "ground"
+    },
+    {
+      "name": "R+7",
+      "x": 460,
+      "y": 106,
+      "type": "power"
+    },
+    {
+      "name": "R-7",
+      "x": 475,
+      "y": 106,
+      "type": "ground"
+    },
+    {
+      "name": "R+8",
+      "x": 460,
+      "y": 117,
+      "type": "power"
+    },
+    {
+      "name": "R-8",
+      "x": 475,
+      "y": 117,
+      "type": "ground"
+    },
+    {
+      "name": "R+9",
+      "x": 460,
+      "y": 128,
+      "type": "power"
+    },
+    {
+      "name": "R-9",
+      "x": 475,
+      "y": 128,
+      "type": "ground"
+    },
+    {
+      "name": "R+10",
+      "x": 460,
+      "y": 139,
+      "type": "power"
+    },
+    {
+      "name": "R-10",
+      "x": 475,
+      "y": 139,
+      "type": "ground"
+    },
+    {
+      "name": "R+11",
+      "x": 460,
+      "y": 150,
+      "type": "power"
+    },
+    {
+      "name": "R-11",
+      "x": 475,
+      "y": 150,
+      "type": "ground"
+    },
+    {
+      "name": "R+12",
+      "x": 460,
+      "y": 161,
+      "type": "power"
+    },
+    {
+      "name": "R-12",
+      "x": 475,
+      "y": 161,
+      "type": "ground"
+    },
+    {
+      "name": "R+13",
+      "x": 460,
+      "y": 172,
+      "type": "power"
+    },
+    {
+      "name": "R-13",
+      "x": 475,
+      "y": 172,
+      "type": "ground"
+    },
+    {
+      "name": "R+14",
+      "x": 460,
+      "y": 183,
+      "type": "power"
+    },
+    {
+      "name": "R-14",
+      "x": 475,
+      "y": 183,
+      "type": "ground"
+    },
+    {
+      "name": "R+15",
+      "x": 460,
+      "y": 194,
+      "type": "power"
+    },
+    {
+      "name": "R-15",
+      "x": 475,
+      "y": 194,
+      "type": "ground"
+    },
+    {
+      "name": "R+16",
+      "x": 460,
+      "y": 205,
+      "type": "power"
+    },
+    {
+      "name": "R-16",
+      "x": 475,
+      "y": 205,
+      "type": "ground"
+    },
+    {
+      "name": "R+17",
+      "x": 460,
+      "y": 216,
+      "type": "power"
+    },
+    {
+      "name": "R-17",
+      "x": 475,
+      "y": 216,
+      "type": "ground"
+    },
+    {
+      "name": "R+18",
+      "x": 460,
+      "y": 227,
+      "type": "power"
+    },
+    {
+      "name": "R-18",
+      "x": 475,
+      "y": 227,
+      "type": "ground"
+    },
+    {
+      "name": "R+19",
+      "x": 460,
+      "y": 238,
+      "type": "power"
+    },
+    {
+      "name": "R-19",
+      "x": 475,
+      "y": 238,
+      "type": "ground"
+    },
+    {
+      "name": "R+20",
+      "x": 460,
+      "y": 249,
+      "type": "power"
+    },
+    {
+      "name": "R-20",
+      "x": 475,
+      "y": 249,
+      "type": "ground"
+    },
+    {
+      "name": "R+21",
+      "x": 460,
+      "y": 260,
+      "type": "power"
+    },
+    {
+      "name": "R-21",
+      "x": 475,
+      "y": 260,
+      "type": "ground"
+    },
+    {
+      "name": "R+22",
+      "x": 460,
+      "y": 271,
+      "type": "power"
+    },
+    {
+      "name": "R-22",
+      "x": 475,
+      "y": 271,
+      "type": "ground"
+    },
+    {
+      "name": "R+23",
+      "x": 460,
+      "y": 282,
+      "type": "power"
+    },
+    {
+      "name": "R-23",
+      "x": 475,
+      "y": 282,
+      "type": "ground"
+    },
+    {
+      "name": "R+24",
+      "x": 460,
+      "y": 293,
+      "type": "power"
+    },
+    {
+      "name": "R-24",
+      "x": 475,
+      "y": 293,
+      "type": "ground"
+    },
+    {
+      "name": "R+25",
+      "x": 460,
+      "y": 304,
+      "type": "power"
+    },
+    {
+      "name": "R-25",
+      "x": 475,
+      "y": 304,
+      "type": "ground"
+    },
+    {
+      "name": "1a",
+      "x": 80,
+      "y": 55,
+      "type": "hole"
+    },
+    {
+      "name": "1b",
+      "x": 105,
+      "y": 55,
+      "type": "hole"
+    },
+    {
+      "name": "1c",
+      "x": 130,
+      "y": 55,
+      "type": "hole"
+    },
+    {
+      "name": "1d",
+      "x": 155,
+      "y": 55,
+      "type": "hole"
+    },
+    {
+      "name": "1e",
+      "x": 180,
+      "y": 55,
+      "type": "hole"
+    },
+    {
+      "name": "1f",
+      "x": 280,
+      "y": 55,
+      "type": "hole"
+    },
+    {
+      "name": "1g",
+      "x": 305,
+      "y": 55,
+      "type": "hole"
+    },
+    {
+      "name": "1h",
+      "x": 330,
+      "y": 55,
+      "type": "hole"
+    },
+    {
+      "name": "1i",
+      "x": 355,
+      "y": 55,
+      "type": "hole"
+    },
+    {
+      "name": "1j",
+      "x": 380,
+      "y": 55,
+      "type": "hole"
+    },
+    {
+      "name": "2a",
+      "x": 80,
+      "y": 63,
+      "type": "hole"
+    },
+    {
+      "name": "2b",
+      "x": 105,
+      "y": 63,
+      "type": "hole"
+    },
+    {
+      "name": "2c",
+      "x": 130,
+      "y": 63,
+      "type": "hole"
+    },
+    {
+      "name": "2d",
+      "x": 155,
+      "y": 63,
+      "type": "hole"
+    },
+    {
+      "name": "2e",
+      "x": 180,
+      "y": 63,
+      "type": "hole"
+    },
+    {
+      "name": "2f",
+      "x": 280,
+      "y": 63,
+      "type": "hole"
+    },
+    {
+      "name": "2g",
+      "x": 305,
+      "y": 63,
+      "type": "hole"
+    },
+    {
+      "name": "2h",
+      "x": 330,
+      "y": 63,
+      "type": "hole"
+    },
+    {
+      "name": "2i",
+      "x": 355,
+      "y": 63,
+      "type": "hole"
+    },
+    {
+      "name": "2j",
+      "x": 380,
+      "y": 63,
+      "type": "hole"
+    },
+    {
+      "name": "3a",
+      "x": 80,
+      "y": 71,
+      "type": "hole"
+    },
+    {
+      "name": "3b",
+      "x": 105,
+      "y": 71,
+      "type": "hole"
+    },
+    {
+      "name": "3c",
+      "x": 130,
+      "y": 71,
+      "type": "hole"
+    },
+    {
+      "name": "3d",
+      "x": 155,
+      "y": 71,
+      "type": "hole"
+    },
+    {
+      "name": "3e",
+      "x": 180,
+      "y": 71,
+      "type": "hole"
+    },
+    {
+      "name": "3f",
+      "x": 280,
+      "y": 71,
+      "type": "hole"
+    },
+    {
+      "name": "3g",
+      "x": 305,
+      "y": 71,
+      "type": "hole"
+    },
+    {
+      "name": "3h",
+      "x": 330,
+      "y": 71,
+      "type": "hole"
+    },
+    {
+      "name": "3i",
+      "x": 355,
+      "y": 71,
+      "type": "hole"
+    },
+    {
+      "name": "3j",
+      "x": 380,
+      "y": 71,
+      "type": "hole"
+    },
+    {
+      "name": "4a",
+      "x": 80,
+      "y": 79,
+      "type": "hole"
+    },
+    {
+      "name": "4b",
+      "x": 105,
+      "y": 79,
+      "type": "hole"
+    },
+    {
+      "name": "4c",
+      "x": 130,
+      "y": 79,
+      "type": "hole"
+    },
+    {
+      "name": "4d",
+      "x": 155,
+      "y": 79,
+      "type": "hole"
+    },
+    {
+      "name": "4e",
+      "x": 180,
+      "y": 79,
+      "type": "hole"
+    },
+    {
+      "name": "4f",
+      "x": 280,
+      "y": 79,
+      "type": "hole"
+    },
+    {
+      "name": "4g",
+      "x": 305,
+      "y": 79,
+      "type": "hole"
+    },
+    {
+      "name": "4h",
+      "x": 330,
+      "y": 79,
+      "type": "hole"
+    },
+    {
+      "name": "4i",
+      "x": 355,
+      "y": 79,
+      "type": "hole"
+    },
+    {
+      "name": "4j",
+      "x": 380,
+      "y": 79,
+      "type": "hole"
+    },
+    {
+      "name": "5a",
+      "x": 80,
+      "y": 87,
+      "type": "hole"
+    },
+    {
+      "name": "5b",
+      "x": 105,
+      "y": 87,
+      "type": "hole"
+    },
+    {
+      "name": "5c",
+      "x": 130,
+      "y": 87,
+      "type": "hole"
+    },
+    {
+      "name": "5d",
+      "x": 155,
+      "y": 87,
+      "type": "hole"
+    },
+    {
+      "name": "5e",
+      "x": 180,
+      "y": 87,
+      "type": "hole"
+    },
+    {
+      "name": "5f",
+      "x": 280,
+      "y": 87,
+      "type": "hole"
+    },
+    {
+      "name": "5g",
+      "x": 305,
+      "y": 87,
+      "type": "hole"
+    },
+    {
+      "name": "5h",
+      "x": 330,
+      "y": 87,
+      "type": "hole"
+    },
+    {
+      "name": "5i",
+      "x": 355,
+      "y": 87,
+      "type": "hole"
+    },
+    {
+      "name": "5j",
+      "x": 380,
+      "y": 87,
+      "type": "hole"
+    },
+    {
+      "name": "6a",
+      "x": 80,
+      "y": 95,
+      "type": "hole"
+    },
+    {
+      "name": "6b",
+      "x": 105,
+      "y": 95,
+      "type": "hole"
+    },
+    {
+      "name": "6c",
+      "x": 130,
+      "y": 95,
+      "type": "hole"
+    },
+    {
+      "name": "6d",
+      "x": 155,
+      "y": 95,
+      "type": "hole"
+    },
+    {
+      "name": "6e",
+      "x": 180,
+      "y": 95,
+      "type": "hole"
+    },
+    {
+      "name": "6f",
+      "x": 280,
+      "y": 95,
+      "type": "hole"
+    },
+    {
+      "name": "6g",
+      "x": 305,
+      "y": 95,
+      "type": "hole"
+    },
+    {
+      "name": "6h",
+      "x": 330,
+      "y": 95,
+      "type": "hole"
+    },
+    {
+      "name": "6i",
+      "x": 355,
+      "y": 95,
+      "type": "hole"
+    },
+    {
+      "name": "6j",
+      "x": 380,
+      "y": 95,
+      "type": "hole"
+    },
+    {
+      "name": "7a",
+      "x": 80,
+      "y": 103,
+      "type": "hole"
+    },
+    {
+      "name": "7b",
+      "x": 105,
+      "y": 103,
+      "type": "hole"
+    },
+    {
+      "name": "7c",
+      "x": 130,
+      "y": 103,
+      "type": "hole"
+    },
+    {
+      "name": "7d",
+      "x": 155,
+      "y": 103,
+      "type": "hole"
+    },
+    {
+      "name": "7e",
+      "x": 180,
+      "y": 103,
+      "type": "hole"
+    },
+    {
+      "name": "7f",
+      "x": 280,
+      "y": 103,
+      "type": "hole"
+    },
+    {
+      "name": "7g",
+      "x": 305,
+      "y": 103,
+      "type": "hole"
+    },
+    {
+      "name": "7h",
+      "x": 330,
+      "y": 103,
+      "type": "hole"
+    },
+    {
+      "name": "7i",
+      "x": 355,
+      "y": 103,
+      "type": "hole"
+    },
+    {
+      "name": "7j",
+      "x": 380,
+      "y": 103,
+      "type": "hole"
+    },
+    {
+      "name": "8a",
+      "x": 80,
+      "y": 111,
+      "type": "hole"
+    },
+    {
+      "name": "8b",
+      "x": 105,
+      "y": 111,
+      "type": "hole"
+    },
+    {
+      "name": "8c",
+      "x": 130,
+      "y": 111,
+      "type": "hole"
+    },
+    {
+      "name": "8d",
+      "x": 155,
+      "y": 111,
+      "type": "hole"
+    },
+    {
+      "name": "8e",
+      "x": 180,
+      "y": 111,
+      "type": "hole"
+    },
+    {
+      "name": "8f",
+      "x": 280,
+      "y": 111,
+      "type": "hole"
+    },
+    {
+      "name": "8g",
+      "x": 305,
+      "y": 111,
+      "type": "hole"
+    },
+    {
+      "name": "8h",
+      "x": 330,
+      "y": 111,
+      "type": "hole"
+    },
+    {
+      "name": "8i",
+      "x": 355,
+      "y": 111,
+      "type": "hole"
+    },
+    {
+      "name": "8j",
+      "x": 380,
+      "y": 111,
+      "type": "hole"
+    },
+    {
+      "name": "9a",
+      "x": 80,
+      "y": 119,
+      "type": "hole"
+    },
+    {
+      "name": "9b",
+      "x": 105,
+      "y": 119,
+      "type": "hole"
+    },
+    {
+      "name": "9c",
+      "x": 130,
+      "y": 119,
+      "type": "hole"
+    },
+    {
+      "name": "9d",
+      "x": 155,
+      "y": 119,
+      "type": "hole"
+    },
+    {
+      "name": "9e",
+      "x": 180,
+      "y": 119,
+      "type": "hole"
+    },
+    {
+      "name": "9f",
+      "x": 280,
+      "y": 119,
+      "type": "hole"
+    },
+    {
+      "name": "9g",
+      "x": 305,
+      "y": 119,
+      "type": "hole"
+    },
+    {
+      "name": "9h",
+      "x": 330,
+      "y": 119,
+      "type": "hole"
+    },
+    {
+      "name": "9i",
+      "x": 355,
+      "y": 119,
+      "type": "hole"
+    },
+    {
+      "name": "9j",
+      "x": 380,
+      "y": 119,
+      "type": "hole"
+    },
+    {
+      "name": "10a",
+      "x": 80,
+      "y": 127,
+      "type": "hole"
+    },
+    {
+      "name": "10b",
+      "x": 105,
+      "y": 127,
+      "type": "hole"
+    },
+    {
+      "name": "10c",
+      "x": 130,
+      "y": 127,
+      "type": "hole"
+    },
+    {
+      "name": "10d",
+      "x": 155,
+      "y": 127,
+      "type": "hole"
+    },
+    {
+      "name": "10e",
+      "x": 180,
+      "y": 127,
+      "type": "hole"
+    },
+    {
+      "name": "10f",
+      "x": 280,
+      "y": 127,
+      "type": "hole"
+    },
+    {
+      "name": "10g",
+      "x": 305,
+      "y": 127,
+      "type": "hole"
+    },
+    {
+      "name": "10h",
+      "x": 330,
+      "y": 127,
+      "type": "hole"
+    },
+    {
+      "name": "10i",
+      "x": 355,
+      "y": 127,
+      "type": "hole"
+    },
+    {
+      "name": "10j",
+      "x": 380,
+      "y": 127,
+      "type": "hole"
+    },
+    {
+      "name": "11a",
+      "x": 80,
+      "y": 135,
+      "type": "hole"
+    },
+    {
+      "name": "11b",
+      "x": 105,
+      "y": 135,
+      "type": "hole"
+    },
+    {
+      "name": "11c",
+      "x": 130,
+      "y": 135,
+      "type": "hole"
+    },
+    {
+      "name": "11d",
+      "x": 155,
+      "y": 135,
+      "type": "hole"
+    },
+    {
+      "name": "11e",
+      "x": 180,
+      "y": 135,
+      "type": "hole"
+    },
+    {
+      "name": "11f",
+      "x": 280,
+      "y": 135,
+      "type": "hole"
+    },
+    {
+      "name": "11g",
+      "x": 305,
+      "y": 135,
+      "type": "hole"
+    },
+    {
+      "name": "11h",
+      "x": 330,
+      "y": 135,
+      "type": "hole"
+    },
+    {
+      "name": "11i",
+      "x": 355,
+      "y": 135,
+      "type": "hole"
+    },
+    {
+      "name": "11j",
+      "x": 380,
+      "y": 135,
+      "type": "hole"
+    },
+    {
+      "name": "12a",
+      "x": 80,
+      "y": 143,
+      "type": "hole"
+    },
+    {
+      "name": "12b",
+      "x": 105,
+      "y": 143,
+      "type": "hole"
+    },
+    {
+      "name": "12c",
+      "x": 130,
+      "y": 143,
+      "type": "hole"
+    },
+    {
+      "name": "12d",
+      "x": 155,
+      "y": 143,
+      "type": "hole"
+    },
+    {
+      "name": "12e",
+      "x": 180,
+      "y": 143,
+      "type": "hole"
+    },
+    {
+      "name": "12f",
+      "x": 280,
+      "y": 143,
+      "type": "hole"
+    },
+    {
+      "name": "12g",
+      "x": 305,
+      "y": 143,
+      "type": "hole"
+    },
+    {
+      "name": "12h",
+      "x": 330,
+      "y": 143,
+      "type": "hole"
+    },
+    {
+      "name": "12i",
+      "x": 355,
+      "y": 143,
+      "type": "hole"
+    },
+    {
+      "name": "12j",
+      "x": 380,
+      "y": 143,
+      "type": "hole"
+    },
+    {
+      "name": "13a",
+      "x": 80,
+      "y": 151,
+      "type": "hole"
+    },
+    {
+      "name": "13b",
+      "x": 105,
+      "y": 151,
+      "type": "hole"
+    },
+    {
+      "name": "13c",
+      "x": 130,
+      "y": 151,
+      "type": "hole"
+    },
+    {
+      "name": "13d",
+      "x": 155,
+      "y": 151,
+      "type": "hole"
+    },
+    {
+      "name": "13e",
+      "x": 180,
+      "y": 151,
+      "type": "hole"
+    },
+    {
+      "name": "13f",
+      "x": 280,
+      "y": 151,
+      "type": "hole"
+    },
+    {
+      "name": "13g",
+      "x": 305,
+      "y": 151,
+      "type": "hole"
+    },
+    {
+      "name": "13h",
+      "x": 330,
+      "y": 151,
+      "type": "hole"
+    },
+    {
+      "name": "13i",
+      "x": 355,
+      "y": 151,
+      "type": "hole"
+    },
+    {
+      "name": "13j",
+      "x": 380,
+      "y": 151,
+      "type": "hole"
+    },
+    {
+      "name": "14a",
+      "x": 80,
+      "y": 159,
+      "type": "hole"
+    },
+    {
+      "name": "14b",
+      "x": 105,
+      "y": 159,
+      "type": "hole"
+    },
+    {
+      "name": "14c",
+      "x": 130,
+      "y": 159,
+      "type": "hole"
+    },
+    {
+      "name": "14d",
+      "x": 155,
+      "y": 159,
+      "type": "hole"
+    },
+    {
+      "name": "14e",
+      "x": 180,
+      "y": 159,
+      "type": "hole"
+    },
+    {
+      "name": "14f",
+      "x": 280,
+      "y": 159,
+      "type": "hole"
+    },
+    {
+      "name": "14g",
+      "x": 305,
+      "y": 159,
+      "type": "hole"
+    },
+    {
+      "name": "14h",
+      "x": 330,
+      "y": 159,
+      "type": "hole"
+    },
+    {
+      "name": "14i",
+      "x": 355,
+      "y": 159,
+      "type": "hole"
+    },
+    {
+      "name": "14j",
+      "x": 380,
+      "y": 159,
+      "type": "hole"
+    },
+    {
+      "name": "15a",
+      "x": 80,
+      "y": 167,
+      "type": "hole"
+    },
+    {
+      "name": "15b",
+      "x": 105,
+      "y": 167,
+      "type": "hole"
+    },
+    {
+      "name": "15c",
+      "x": 130,
+      "y": 167,
+      "type": "hole"
+    },
+    {
+      "name": "15d",
+      "x": 155,
+      "y": 167,
+      "type": "hole"
+    },
+    {
+      "name": "15e",
+      "x": 180,
+      "y": 167,
+      "type": "hole"
+    },
+    {
+      "name": "15f",
+      "x": 280,
+      "y": 167,
+      "type": "hole"
+    },
+    {
+      "name": "15g",
+      "x": 305,
+      "y": 167,
+      "type": "hole"
+    },
+    {
+      "name": "15h",
+      "x": 330,
+      "y": 167,
+      "type": "hole"
+    },
+    {
+      "name": "15i",
+      "x": 355,
+      "y": 167,
+      "type": "hole"
+    },
+    {
+      "name": "15j",
+      "x": 380,
+      "y": 167,
+      "type": "hole"
+    },
+    {
+      "name": "16a",
+      "x": 80,
+      "y": 185,
+      "type": "hole"
+    },
+    {
+      "name": "16b",
+      "x": 105,
+      "y": 185,
+      "type": "hole"
+    },
+    {
+      "name": "16c",
+      "x": 130,
+      "y": 185,
+      "type": "hole"
+    },
+    {
+      "name": "16d",
+      "x": 155,
+      "y": 185,
+      "type": "hole"
+    },
+    {
+      "name": "16e",
+      "x": 180,
+      "y": 185,
+      "type": "hole"
+    },
+    {
+      "name": "16f",
+      "x": 280,
+      "y": 185,
+      "type": "hole"
+    },
+    {
+      "name": "16g",
+      "x": 305,
+      "y": 185,
+      "type": "hole"
+    },
+    {
+      "name": "16h",
+      "x": 330,
+      "y": 185,
+      "type": "hole"
+    },
+    {
+      "name": "16i",
+      "x": 355,
+      "y": 185,
+      "type": "hole"
+    },
+    {
+      "name": "16j",
+      "x": 380,
+      "y": 185,
+      "type": "hole"
+    },
+    {
+      "name": "17a",
+      "x": 80,
+      "y": 193,
+      "type": "hole"
+    },
+    {
+      "name": "17b",
+      "x": 105,
+      "y": 193,
+      "type": "hole"
+    },
+    {
+      "name": "17c",
+      "x": 130,
+      "y": 193,
+      "type": "hole"
+    },
+    {
+      "name": "17d",
+      "x": 155,
+      "y": 193,
+      "type": "hole"
+    },
+    {
+      "name": "17e",
+      "x": 180,
+      "y": 193,
+      "type": "hole"
+    },
+    {
+      "name": "17f",
+      "x": 280,
+      "y": 193,
+      "type": "hole"
+    },
+    {
+      "name": "17g",
+      "x": 305,
+      "y": 193,
+      "type": "hole"
+    },
+    {
+      "name": "17h",
+      "x": 330,
+      "y": 193,
+      "type": "hole"
+    },
+    {
+      "name": "17i",
+      "x": 355,
+      "y": 193,
+      "type": "hole"
+    },
+    {
+      "name": "17j",
+      "x": 380,
+      "y": 193,
+      "type": "hole"
+    },
+    {
+      "name": "18a",
+      "x": 80,
+      "y": 201,
+      "type": "hole"
+    },
+    {
+      "name": "18b",
+      "x": 105,
+      "y": 201,
+      "type": "hole"
+    },
+    {
+      "name": "18c",
+      "x": 130,
+      "y": 201,
+      "type": "hole"
+    },
+    {
+      "name": "18d",
+      "x": 155,
+      "y": 201,
+      "type": "hole"
+    },
+    {
+      "name": "18e",
+      "x": 180,
+      "y": 201,
+      "type": "hole"
+    },
+    {
+      "name": "18f",
+      "x": 280,
+      "y": 201,
+      "type": "hole"
+    },
+    {
+      "name": "18g",
+      "x": 305,
+      "y": 201,
+      "type": "hole"
+    },
+    {
+      "name": "18h",
+      "x": 330,
+      "y": 201,
+      "type": "hole"
+    },
+    {
+      "name": "18i",
+      "x": 355,
+      "y": 201,
+      "type": "hole"
+    },
+    {
+      "name": "18j",
+      "x": 380,
+      "y": 201,
+      "type": "hole"
+    },
+    {
+      "name": "19a",
+      "x": 80,
+      "y": 209,
+      "type": "hole"
+    },
+    {
+      "name": "19b",
+      "x": 105,
+      "y": 209,
+      "type": "hole"
+    },
+    {
+      "name": "19c",
+      "x": 130,
+      "y": 209,
+      "type": "hole"
+    },
+    {
+      "name": "19d",
+      "x": 155,
+      "y": 209,
+      "type": "hole"
+    },
+    {
+      "name": "19e",
+      "x": 180,
+      "y": 209,
+      "type": "hole"
+    },
+    {
+      "name": "19f",
+      "x": 280,
+      "y": 209,
+      "type": "hole"
+    },
+    {
+      "name": "19g",
+      "x": 305,
+      "y": 209,
+      "type": "hole"
+    },
+    {
+      "name": "19h",
+      "x": 330,
+      "y": 209,
+      "type": "hole"
+    },
+    {
+      "name": "19i",
+      "x": 355,
+      "y": 209,
+      "type": "hole"
+    },
+    {
+      "name": "19j",
+      "x": 380,
+      "y": 209,
+      "type": "hole"
+    },
+    {
+      "name": "20a",
+      "x": 80,
+      "y": 217,
+      "type": "hole"
+    },
+    {
+      "name": "20b",
+      "x": 105,
+      "y": 217,
+      "type": "hole"
+    },
+    {
+      "name": "20c",
+      "x": 130,
+      "y": 217,
+      "type": "hole"
+    },
+    {
+      "name": "20d",
+      "x": 155,
+      "y": 217,
+      "type": "hole"
+    },
+    {
+      "name": "20e",
+      "x": 180,
+      "y": 217,
+      "type": "hole"
+    },
+    {
+      "name": "20f",
+      "x": 280,
+      "y": 217,
+      "type": "hole"
+    },
+    {
+      "name": "20g",
+      "x": 305,
+      "y": 217,
+      "type": "hole"
+    },
+    {
+      "name": "20h",
+      "x": 330,
+      "y": 217,
+      "type": "hole"
+    },
+    {
+      "name": "20i",
+      "x": 355,
+      "y": 217,
+      "type": "hole"
+    },
+    {
+      "name": "20j",
+      "x": 380,
+      "y": 217,
+      "type": "hole"
+    },
+    {
+      "name": "21a",
+      "x": 80,
+      "y": 225,
+      "type": "hole"
+    },
+    {
+      "name": "21b",
+      "x": 105,
+      "y": 225,
+      "type": "hole"
+    },
+    {
+      "name": "21c",
+      "x": 130,
+      "y": 225,
+      "type": "hole"
+    },
+    {
+      "name": "21d",
+      "x": 155,
+      "y": 225,
+      "type": "hole"
+    },
+    {
+      "name": "21e",
+      "x": 180,
+      "y": 225,
+      "type": "hole"
+    },
+    {
+      "name": "21f",
+      "x": 280,
+      "y": 225,
+      "type": "hole"
+    },
+    {
+      "name": "21g",
+      "x": 305,
+      "y": 225,
+      "type": "hole"
+    },
+    {
+      "name": "21h",
+      "x": 330,
+      "y": 225,
+      "type": "hole"
+    },
+    {
+      "name": "21i",
+      "x": 355,
+      "y": 225,
+      "type": "hole"
+    },
+    {
+      "name": "21j",
+      "x": 380,
+      "y": 225,
+      "type": "hole"
+    },
+    {
+      "name": "22a",
+      "x": 80,
+      "y": 233,
+      "type": "hole"
+    },
+    {
+      "name": "22b",
+      "x": 105,
+      "y": 233,
+      "type": "hole"
+    },
+    {
+      "name": "22c",
+      "x": 130,
+      "y": 233,
+      "type": "hole"
+    },
+    {
+      "name": "22d",
+      "x": 155,
+      "y": 233,
+      "type": "hole"
+    },
+    {
+      "name": "22e",
+      "x": 180,
+      "y": 233,
+      "type": "hole"
+    },
+    {
+      "name": "22f",
+      "x": 280,
+      "y": 233,
+      "type": "hole"
+    },
+    {
+      "name": "22g",
+      "x": 305,
+      "y": 233,
+      "type": "hole"
+    },
+    {
+      "name": "22h",
+      "x": 330,
+      "y": 233,
+      "type": "hole"
+    },
+    {
+      "name": "22i",
+      "x": 355,
+      "y": 233,
+      "type": "hole"
+    },
+    {
+      "name": "22j",
+      "x": 380,
+      "y": 233,
+      "type": "hole"
+    },
+    {
+      "name": "23a",
+      "x": 80,
+      "y": 241,
+      "type": "hole"
+    },
+    {
+      "name": "23b",
+      "x": 105,
+      "y": 241,
+      "type": "hole"
+    },
+    {
+      "name": "23c",
+      "x": 130,
+      "y": 241,
+      "type": "hole"
+    },
+    {
+      "name": "23d",
+      "x": 155,
+      "y": 241,
+      "type": "hole"
+    },
+    {
+      "name": "23e",
+      "x": 180,
+      "y": 241,
+      "type": "hole"
+    },
+    {
+      "name": "23f",
+      "x": 280,
+      "y": 241,
+      "type": "hole"
+    },
+    {
+      "name": "23g",
+      "x": 305,
+      "y": 241,
+      "type": "hole"
+    },
+    {
+      "name": "23h",
+      "x": 330,
+      "y": 241,
+      "type": "hole"
+    },
+    {
+      "name": "23i",
+      "x": 355,
+      "y": 241,
+      "type": "hole"
+    },
+    {
+      "name": "23j",
+      "x": 380,
+      "y": 241,
+      "type": "hole"
+    },
+    {
+      "name": "24a",
+      "x": 80,
+      "y": 249,
+      "type": "hole"
+    },
+    {
+      "name": "24b",
+      "x": 105,
+      "y": 249,
+      "type": "hole"
+    },
+    {
+      "name": "24c",
+      "x": 130,
+      "y": 249,
+      "type": "hole"
+    },
+    {
+      "name": "24d",
+      "x": 155,
+      "y": 249,
+      "type": "hole"
+    },
+    {
+      "name": "24e",
+      "x": 180,
+      "y": 249,
+      "type": "hole"
+    },
+    {
+      "name": "24f",
+      "x": 280,
+      "y": 249,
+      "type": "hole"
+    },
+    {
+      "name": "24g",
+      "x": 305,
+      "y": 249,
+      "type": "hole"
+    },
+    {
+      "name": "24h",
+      "x": 330,
+      "y": 249,
+      "type": "hole"
+    },
+    {
+      "name": "24i",
+      "x": 355,
+      "y": 249,
+      "type": "hole"
+    },
+    {
+      "name": "24j",
+      "x": 380,
+      "y": 249,
+      "type": "hole"
+    },
+    {
+      "name": "25a",
+      "x": 80,
+      "y": 257,
+      "type": "hole"
+    },
+    {
+      "name": "25b",
+      "x": 105,
+      "y": 257,
+      "type": "hole"
+    },
+    {
+      "name": "25c",
+      "x": 130,
+      "y": 257,
+      "type": "hole"
+    },
+    {
+      "name": "25d",
+      "x": 155,
+      "y": 257,
+      "type": "hole"
+    },
+    {
+      "name": "25e",
+      "x": 180,
+      "y": 257,
+      "type": "hole"
+    },
+    {
+      "name": "25f",
+      "x": 280,
+      "y": 257,
+      "type": "hole"
+    },
+    {
+      "name": "25g",
+      "x": 305,
+      "y": 257,
+      "type": "hole"
+    },
+    {
+      "name": "25h",
+      "x": 330,
+      "y": 257,
+      "type": "hole"
+    },
+    {
+      "name": "25i",
+      "x": 355,
+      "y": 257,
+      "type": "hole"
+    },
+    {
+      "name": "25j",
+      "x": 380,
+      "y": 257,
+      "type": "hole"
+    },
+    {
+      "name": "26a",
+      "x": 80,
+      "y": 265,
+      "type": "hole"
+    },
+    {
+      "name": "26b",
+      "x": 105,
+      "y": 265,
+      "type": "hole"
+    },
+    {
+      "name": "26c",
+      "x": 130,
+      "y": 265,
+      "type": "hole"
+    },
+    {
+      "name": "26d",
+      "x": 155,
+      "y": 265,
+      "type": "hole"
+    },
+    {
+      "name": "26e",
+      "x": 180,
+      "y": 265,
+      "type": "hole"
+    },
+    {
+      "name": "26f",
+      "x": 280,
+      "y": 265,
+      "type": "hole"
+    },
+    {
+      "name": "26g",
+      "x": 305,
+      "y": 265,
+      "type": "hole"
+    },
+    {
+      "name": "26h",
+      "x": 330,
+      "y": 265,
+      "type": "hole"
+    },
+    {
+      "name": "26i",
+      "x": 355,
+      "y": 265,
+      "type": "hole"
+    },
+    {
+      "name": "26j",
+      "x": 380,
+      "y": 265,
+      "type": "hole"
+    },
+    {
+      "name": "27a",
+      "x": 80,
+      "y": 273,
+      "type": "hole"
+    },
+    {
+      "name": "27b",
+      "x": 105,
+      "y": 273,
+      "type": "hole"
+    },
+    {
+      "name": "27c",
+      "x": 130,
+      "y": 273,
+      "type": "hole"
+    },
+    {
+      "name": "27d",
+      "x": 155,
+      "y": 273,
+      "type": "hole"
+    },
+    {
+      "name": "27e",
+      "x": 180,
+      "y": 273,
+      "type": "hole"
+    },
+    {
+      "name": "27f",
+      "x": 280,
+      "y": 273,
+      "type": "hole"
+    },
+    {
+      "name": "27g",
+      "x": 305,
+      "y": 273,
+      "type": "hole"
+    },
+    {
+      "name": "27h",
+      "x": 330,
+      "y": 273,
+      "type": "hole"
+    },
+    {
+      "name": "27i",
+      "x": 355,
+      "y": 273,
+      "type": "hole"
+    },
+    {
+      "name": "27j",
+      "x": 380,
+      "y": 273,
+      "type": "hole"
+    },
+    {
+      "name": "28a",
+      "x": 80,
+      "y": 281,
+      "type": "hole"
+    },
+    {
+      "name": "28b",
+      "x": 105,
+      "y": 281,
+      "type": "hole"
+    },
+    {
+      "name": "28c",
+      "x": 130,
+      "y": 281,
+      "type": "hole"
+    },
+    {
+      "name": "28d",
+      "x": 155,
+      "y": 281,
+      "type": "hole"
+    },
+    {
+      "name": "28e",
+      "x": 180,
+      "y": 281,
+      "type": "hole"
+    },
+    {
+      "name": "28f",
+      "x": 280,
+      "y": 281,
+      "type": "hole"
+    },
+    {
+      "name": "28g",
+      "x": 305,
+      "y": 281,
+      "type": "hole"
+    },
+    {
+      "name": "28h",
+      "x": 330,
+      "y": 281,
+      "type": "hole"
+    },
+    {
+      "name": "28i",
+      "x": 355,
+      "y": 281,
+      "type": "hole"
+    },
+    {
+      "name": "28j",
+      "x": 380,
+      "y": 281,
+      "type": "hole"
+    },
+    {
+      "name": "29a",
+      "x": 80,
+      "y": 289,
+      "type": "hole"
+    },
+    {
+      "name": "29b",
+      "x": 105,
+      "y": 289,
+      "type": "hole"
+    },
+    {
+      "name": "29c",
+      "x": 130,
+      "y": 289,
+      "type": "hole"
+    },
+    {
+      "name": "29d",
+      "x": 155,
+      "y": 289,
+      "type": "hole"
+    },
+    {
+      "name": "29e",
+      "x": 180,
+      "y": 289,
+      "type": "hole"
+    },
+    {
+      "name": "29f",
+      "x": 280,
+      "y": 289,
+      "type": "hole"
+    },
+    {
+      "name": "29g",
+      "x": 305,
+      "y": 289,
+      "type": "hole"
+    },
+    {
+      "name": "29h",
+      "x": 330,
+      "y": 289,
+      "type": "hole"
+    },
+    {
+      "name": "29i",
+      "x": 355,
+      "y": 289,
+      "type": "hole"
+    },
+    {
+      "name": "29j",
+      "x": 380,
+      "y": 289,
+      "type": "hole"
+    },
+    {
+      "name": "30a",
+      "x": 80,
+      "y": 297,
+      "type": "hole"
+    },
+    {
+      "name": "30b",
+      "x": 105,
+      "y": 297,
+      "type": "hole"
+    },
+    {
+      "name": "30c",
+      "x": 130,
+      "y": 297,
+      "type": "hole"
+    },
+    {
+      "name": "30d",
+      "x": 155,
+      "y": 297,
+      "type": "hole"
+    },
+    {
+      "name": "30e",
+      "x": 180,
+      "y": 297,
+      "type": "hole"
+    },
+    {
+      "name": "30f",
+      "x": 280,
+      "y": 297,
+      "type": "hole"
+    },
+    {
+      "name": "30g",
+      "x": 305,
+      "y": 297,
+      "type": "hole"
+    },
+    {
+      "name": "30h",
+      "x": 330,
+      "y": 297,
+      "type": "hole"
+    },
+    {
+      "name": "30i",
+      "x": 355,
+      "y": 297,
+      "type": "hole"
+    },
+    {
+      "name": "30j",
+      "x": 380,
+      "y": 297,
+      "type": "hole"
+    }
+  ]
+}
