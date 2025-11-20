@@ -365,6 +365,9 @@ async def websocket_execute_code(websocket: WebSocket):
     await websocket.accept()
     print("WebSocket 연결됨")
     
+    process = None
+    temp_file_path = None
+    
     try:
         # 클라이언트로부터 코드 받기
         print("코드 수신 대기 중...")
@@ -385,10 +388,39 @@ async def websocket_execute_code(websocket: WebSocket):
             await websocket.close()
             return
         
-        # 임시 파일 생성
+        # 임시 파일 생성 - 신호 핸들러와 cleanup 코드 자동 추가
         print("임시 파일 생성 중...")
+        
+        # 사용자 코드에 안전한 종료 처리 추가
+        wrapped_code = f"""
+import signal
+import sys
+import atexit
+
+# GPIO 및 기타 리소스 cleanup
+def cleanup_resources():
+    try:
+        from gpiozero import Device
+        Device.pin_factory.close()
+    except:
+        pass
+
+atexit.register(cleanup_resources)
+
+# SIGTERM/SIGINT 핸들러
+def signal_handler(signum, frame):
+    print("\\n>>> 정리 중...")
+    sys.exit(0)
+
+signal.signal(signal.SIGTERM, signal_handler)
+signal.signal(signal.SIGINT, signal_handler)
+
+# === 사용자 코드 시작 ===
+{code}
+"""
+        
         with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False, encoding='utf-8') as temp_file:
-            temp_file.write(code)
+            temp_file.write(wrapped_code)
             temp_file_path = temp_file.name
         print(f"임시 파일 생성 완료: {temp_file_path}")
         
@@ -399,55 +431,108 @@ async def websocket_execute_code(websocket: WebSocket):
         env['PYTHONUNBUFFERED'] = '1'  # 출력 버퍼링 비활성화
         env['PYTHONIOENCODING'] = 'utf-8'  # Python 출력 인코딩을 UTF-8로 설정
         
-        # 비동기 서브프로세스 생성
+        # 비동기 서브프로세스 생성 (stdin도 파이프로 연결)
         print("서브프로세스 시작 중...")
         process = await asyncio.create_subprocess_exec(
             str(python_exe), temp_file_path,
+            stdin=asyncio.subprocess.PIPE,   # stdin 파이프 추가
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT,
             env=env
         )
-        print("서브프로세스 시작됨")
+        print(f"서브프로세스 시작됨 (PID: {process.pid})")
         
-        # 실시간으로 출력 읽고 전송
-        line_count = 0
-        while True:
-            line = await process.stdout.readline()
-            if not line:
-                break
-            
-            # Windows에서 한글 출력을 위해 cp949 또는 utf-8로 시도
-            try:
-                output = line.decode('utf-8')
-            except UnicodeDecodeError:
+        # 출력 읽기와 메시지 수신을 동시에 처리
+        async def read_output():
+            line_count = 0
+            while True:
+                line = await process.stdout.readline()
+                if not line:
+                    break
+                
+                # Windows에서 한글 출력을 위해 cp949 또는 utf-8로 시도
                 try:
-                    output = line.decode('cp949')
+                    output = line.decode('utf-8')
                 except UnicodeDecodeError:
-                    output = line.decode('utf-8', errors='replace')
-            
-            await websocket.send_text(output)
-            line_count += 1
-            print(f"출력 라인 전송: {line_count}")
+                    try:
+                        output = line.decode('cp949')
+                    except UnicodeDecodeError:
+                        output = line.decode('utf-8', errors='replace')
+                
+                await websocket.send_text(output)
+                line_count += 1
         
-        # 프로세스 완료 대기
-        await process.wait()
-        print(f"프로세스 종료 (코드: {process.returncode})")
+        async def receive_messages():
+            while True:
+                try:
+                    message = await websocket.receive_text()
+                    print(f"클라이언트로부터 메시지 수신: {message}")
+                    
+                    if message.startswith("INPUT:"):
+                        # 터미널 입력을 프로세스의 stdin으로 전달
+                        user_input = message[6:]  # "INPUT:" 제거
+                        print(f"프로세스 stdin에 전송: {user_input}")
+                        if process and process.stdin and process.returncode is None:
+                            try:
+                                process.stdin.write((user_input + '\n').encode('utf-8'))
+                                await process.stdin.drain()
+                                print("stdin 전송 완료")
+                            except Exception as e:
+                                print(f"stdin 전송 오류: {e}")
+                    elif message == "STOP":
+                        print("중지 신호 받음 - 프로세스 종료")
+                        if process and process.returncode is None:
+                            process.terminate()
+                        return True
+                except Exception as e:
+                    print(f"메시지 수신 오류: {e}")
+                    return False
+        
+        # 출력 읽기와 메시지 수신을 동시에 실행
+        output_task = asyncio.create_task(read_output())
+        receive_task = asyncio.create_task(receive_messages())
+        
+        # 둘 중 하나가 완료될 때까지 대기
+        done, pending = await asyncio.wait(
+            [output_task, receive_task],
+            return_when=asyncio.FIRST_COMPLETED
+        )
+        
+        # 실행 중인 태스크 취소
+        for task in pending:
+            task.cancel()
+        
+        # 프로세스가 여전히 실행 중이면 강제 종료
+        if process and process.returncode is None:
+            print("프로세스 강제 종료 시도")
+            process.terminate()
+            try:
+                await asyncio.wait_for(process.wait(), timeout=2.0)
+                print("프로세스 정상 종료됨")
+            except asyncio.TimeoutError:
+                print("프로세스 응답 없음 - 강제 kill")
+                process.kill()
+                await process.wait()
+                print("프로세스 강제 종료됨")
+        else:
+            await process.wait()
+        
+        print(f"프로세스 최종 종료 (코드: {process.returncode})")
         
         # 결과 전송
-        if process.returncode == 0:
+        if receive_task in done and receive_task.result():
+            await websocket.send_text("\n>>> 실행이 중지되었습니다")
+        elif process.returncode == 0:
             await websocket.send_text("\n>>> 실행 완료")
         else:
             await websocket.send_text(f"\n>>> 오류 발생 (종료 코드: {process.returncode})")
-        
-        # 임시 파일 삭제
-        try:
-            Path(temp_file_path).unlink()
-            print("임시 파일 삭제 완료")
-        except Exception as e:
-            print(f"임시 파일 삭제 실패: {e}")
             
     except WebSocketDisconnect:
         print("WebSocket 연결 해제됨")
+        if process and process.returncode is None:
+            print("연결 끊김 - 프로세스 강제 종료")
+            process.kill()
+            await process.wait()
     except Exception as e:
         import traceback
         print(f"WebSocket 오류: {e}")
@@ -457,6 +542,14 @@ async def websocket_execute_code(websocket: WebSocket):
         except:
             pass
     finally:
+        # 임시 파일 삭제
+        if temp_file_path:
+            try:
+                Path(temp_file_path).unlink()
+                print("임시 파일 삭제 완료")
+            except Exception as e:
+                print(f"임시 파일 삭제 실패: {e}")
+        
         try:
             await websocket.close()
             print("WebSocket 종료 완료")
