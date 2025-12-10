@@ -1,0 +1,23 @@
+<svg width="100" height="40" viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+  <!-- 저항 본체 -->
+  <rect x="20" y="12" width="60" height="16" fill="#d2b48c" stroke="#8b7355" stroke-width="1.5"/>
+
+  <!-- 색상 밴드 (저항값 표시) -->
+  <rect x="28" y="10" width="4" height="20" fill="#8b4513"/>
+  <rect x="40" y="10" width="4" height="20" fill="#ff0000"/>
+  <rect x="52" y="10" width="4" height="20" fill="#ffd700"/>
+  <rect x="64" y="10" width="4" height="20" fill="#ffd700"/>
+
+  <!-- 다리 (핀) -->
+  <g id="pins">
+    <!-- 왼쪽 핀 -->
+    <line x1="5" y1="20" x2="20" y2="20" stroke="#808080" stroke-width="2"/>
+
+    <!-- 오른쪽 핀 -->
+    <line x1="80" y1="20" x2="95" y2="20" stroke="#808080" stroke-width="2"/>
+  </g>
+
+  <!-- 핀 레이블 -->
+  <text x="5" y="36" text-anchor="start" font-size="6" fill="#666">PIN1</text>
+  <text x="95" y="36" text-anchor="end" font-size="6" fill="#666">PIN2</text>
+</svg>
